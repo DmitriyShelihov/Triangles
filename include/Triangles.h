@@ -98,10 +98,10 @@ class Triangle {
 }
 
 class Line {
-	private:
+	public:
 		Point point1;
 		Point point2;
-	public:
+	private:
 		Line (Point _point1, Point _point2) 
 			: point1(_point1), point2(_point2) {}
 		bool valid() {
@@ -119,6 +119,89 @@ class Line {
                    (point.y-point1.y) * (point2.z-point1.z) == (point.z-point1.z) * (point2.y-point1.y) &&
                    (point.x-point1.x) * (point2.z-point1.z) == (point.z-point1.z) * (point2.x-point1.x);
         }
+        double a() {
+			return point2.x-point1.x;
+        }
+        double b() {
+			return point2.y-point1.y;
+        }
+        double c() {
+			return point2.z-point1.z;
+        }
+        Point start_point() {
+			return point1;
+        }
+
+        bool is_lines_parallel(Line line_1) {
+        	Line line_2(point1, point2);
+			double a1 = line_1.a(); double a2 = line_2.a();
+			double b1 = line_1.b(); double b2 = line_2.b();
+			double c1 = line_1.c(); double c2 = line_2.c();
+			
+			if (compare_doubles(a2, 0) == 0 && compare_doubles(a1, 0) == 0) {
+				if (compare_doubles(b2, 0) == 0 && compare_doubles(b1, 0) == 0) 
+					return 1;
+				else if (compare_doubles(b2, 0) != 0 && compare_doubles(b1, 0) != 0) {
+					if (compare_doubles(c1, b1*c2/b2) == 0)
+						return 1;
+					else
+						return 0;
+				}
+				else
+					return 0;
+			}
+			else if (compare_doubles(a2, 0) != 0 && compare_doubles(a1, 0) != 0) {
+				if (compare_doubles(b1, b2*a1/a2) == 0 && compare_doubles(c1, c2*a1/a2) == 0)
+					return 1;
+				else
+					return 0;
+			}
+			return 0;
+  		}
+
+  		Point lines_intersection_on_plane(Line line_1) {
+			Line line_2 (point1, point2);
+			Point point {};
+			if (line_2.is_line_parallel(line_1))
+				return point;
+			double a1 = line_1.a(); double a2 = line_2.a();
+			double b1 = line_1.b(); double b2 = line_2.b();
+            double c1 = line_1.c(); double c2 = line_2.c();
+			double x1 = line_1.start_point().x; double y1 = line_1.start_point().y; double z1 = line_1.start_point().z;
+			double x3 = point1.x; double y3 = point1.y; double z3 = point1.z;
+
+			if (compare_doubles(a1, 0) != 0) {
+				if (compare_doubles(a2, 0) != 0) {
+					if (compare_doubles(b1, 0) != 0) {
+						if (compare_doubles(b2, 0) != 0) {
+							point.y = (x3*b2*b1-y3*a2*b1-x1*b1*b2+y1*a1*b2)/(a1*b2-a2*b1);
+							point.x = (a1*(point.y-y1)+x1*b1)/b1;
+							if (compare_doubles(c1, 0) != 0) { 
+								point.z = (point.y-y1)*c1/b1 + z1;
+								return point;
+							}
+							if (compare_doubles(c2, 0) != 0) {
+								point.z = (point.y-y3)*c2/b2 + z3;
+								return point;
+							}
+							point.z = z1;
+							return point;
+							
+						} else {
+							//
+						}
+					} else {
+					
+					}
+				} else {
+
+				}
+
+			} else {
+
+
+			}
+		}
 
 }
 
