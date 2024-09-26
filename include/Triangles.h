@@ -1,5 +1,13 @@
 #pragma once 
 
+int compare_double(double a, double b) {
+	if (std::fabs(a-b) < DBL_EPSILON * fmax(fabs(a), fabs(b)))
+		return 0;
+	if (a > b)
+		return 1;
+	return 2;
+}
+
 class Point {
 	public:
 		double x = NAN;
@@ -18,9 +26,7 @@ class Point {
 			return !(std::isnan(x) || std::isnan(y) || std::isnan(z));
 		}
 		bool equal(const Point rhs) {
-			return (std::fabs(x - rhs.x) < DBL_EPSILON * fmax(fabs(x), fabs(rhs.x)) && 
-					std::fabs(y - rhs.y) < DBL_EPSILON * fmax(fabs(y), fabs(rhs.y)) && 
-					std::fabs(z - rhs.z) < DBL_EPSILON * fmax(fabs(z), fabs(rhs.z)));
+			return (compare_double(x, rhs.x) == 0 && compare_double(y, rhs.y) == 0 && compare_double(z, rhs.z) == 0);
 		}
 
 };
@@ -138,7 +144,84 @@ class Plane {
           	std::cout << " }";
 		}
 		
-		Line plane_intersection(Plane plane2) {
-					
+		double A() {
+			return point3.z * (point2.y-point1.y) + point1.z * (point3.y-point2.y) + point2.z * (point1.y-point3.y);
 		}
+
+		double B() {
+			return point3.z * (point1.x-point2.x) + point1.z * (point2.x-point3.x) + point2.z * (point3.x-point1.x);
+		}
+
+		double C() {
+			return (point3.y * (point2.x-point1.x) + point1.y * (point3.x-point2.x) + point2.y * (point1.x-point3.x);
+		}
+		
+		double D() {
+			return point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
+                   point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x;
+		}
+
+		Line plane_intersection(Plane plane2) {
+			Plane plane1 (point1, point2, point3);
+			double A1 = plane1.A(); double A2 = plane2.A();
+			double B1 = plane1.B(); double B2 = plane2.B();
+			double C1 = plane1.C(); double C2 = plane2.C();
+			double D1 = plane1.D(); double D2 = plane2.D();
+			Point point_1 {};
+			Point point_2 {};
+			
+			double N1 = B1 * C2 - C1 * B2;				//line direction vector
+			double N2 = C1 * A2 - A1 * C2;				
+			double N3 = A1 * B2 - B1 * A2;
+
+			if (compare_double(A1, 0) == 0) {
+				if (compare_double(A2, 0) == 0) {
+					if (compare_double(B1, 0) == 0) {
+						if (compare_double(B2, 0) != 0) {		//planes are not parallel
+							point_1.z = -D2/C2;
+							point_1.y = -(C1 * point_1.z + D1)/B1;
+							point_1.x = 0;
+						}
+					}
+					else if (compare_double(B1*C2, B2 * C1) != 0) {
+						point_1.x = 0;
+						point_1.y = (D2*C1-D1*C2)/(B1*C2-B2*C1);
+						point_1.z = (D1*B2-B1*D2)/(B1*C2-B2*C1);
+					}	
+				}
+				else {
+					if (compare_double(B1, 0) == 0) {
+						point_1.z = -D1/C1;
+						point_1.y = 0;
+						point_1.x = -(C2*point_1.z + D2)/A2;
+					}
+					else {
+						point_1.z = 0;
+						point_1.y = -D1/B1;
+						point_1.x = -(B2*point_1.y + D2)/A2;
+					}
+				}
+			}
+			else if (compare_double(B2*A1-B1*A2, 0) != 0){
+				point_1.z = 0;
+				point_1.y = (D1*A2-D2*A1)/(B2*A1-B1*A2);
+				point_1.x = -(B1*point_1.y+D1)/A1;
+			}
+			else if (compare_double(A1*C2-C1*A2, 0) != 0) {
+				point_1.z = (D1*A2-D2*A1)/(A1*C2-C1*A2);
+				point_1.y = 0;
+				point_1.x = -(C1*z+D1)/A1;
+			}
+			
+			if (point_1.valid()) {
+				point_2.x = point_1.x + N1;
+				point_2.y = point_1.y + N2;
+				point_2.z = point_1.z + N3;
+			}
+			
+			Line line (point_1, point_2);
+			return line;
+		}
+	
+		
 }
