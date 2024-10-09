@@ -150,6 +150,13 @@ class Plane {
                    point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x;
 		}
 
+		bool equal(Plane plane) {
+			double A = plane.A(), B = plane.B(), C = plane.C(), D = plane.D();
+			return (compare_double(A*point1.x + B*point1.y + C*point1.z + D, 0) == 0 &&
+				    compare_double(A*point2.x + B*point2.y + C*point2.z + D, 0) == 0 &&
+				    compare_double(A*point3.x + B*point3.y + C*point3.z + D, 0) == 0);
+		}
+
 		Line plane_intersection(Plane plane2) {
 			Plane plane1 (point1, point2, point3);
 			double A1 = plane1.A(); double A2 = plane2.A();
@@ -167,7 +174,6 @@ class Plane {
 				if (compare_double(A2, 0) == 0) {
 					if (compare_double(B1, 0) == 0) {
 						if (compare_double(B2, 0) != 0) {		//planes are not parallel
-							printf("plane_intersection: at compare_double(B2, 0)\n");
 							point_1.z = -D1/C1;
 							point_1.y = -(C2 * point_1.z + D2)/B2;
 							point_1.x = 0;
@@ -258,29 +264,25 @@ class Segment {
 			double b = line.b();
 			double c = line.c();
 			
-			printf("Testing segment intersection with line\n");
-
 			Point point0 = line.start_point();
 			Point intersection {};
 
 			double h = line.point_distance_to_line(point1);
 				
-			printf("h = %lf\n", h);
-
 			Segment segment(point1, point2);
 
 			double l = segment.length();
 			
-			printf("Segment length: %lf\n", l);
-
 			double A = std::sqrt(a*a+b*b+c*c);
 
 			double cos_alpha = ((point2.x-point1.x)*a + (point2.y-point1.y)*b + (point2.z-point1.z)*c)/(l*A);
 
-			printf("cos %lf\n", cos_alpha);
-
-			if (compare_double(cos_alpha, 1) == 0 || compare_double(cos_alpha, -1) == 0)
-				return intersection;						//segment and line are ||
+			if (compare_double(cos_alpha, 1) == 0 || compare_double(cos_alpha, -1) == 0) {		//segment and line are parallel
+				if (line.point_belongs_line(point1))
+					return point1;								//segment belongs to line
+				else
+					return intersection;						//segment and line are parallel and there is no intersection
+			}
 			double r = h/(std::sqrt(1-cos_alpha*cos_alpha));
 
 			intersection.x = point1.x + (point2.x-point1.x)*r/l;
@@ -330,6 +332,15 @@ class Triangle {
 			Plane plane2 = second.plane();
 			Line line = plane1.plane_intersection(plane2);
 
+			if (!line.valid()) {						//planes are parallel or equal
+				if (plane1.equal(plane2)) {
+														//TODO
+				}
+				else {
+					return false;
+				}
+			}
+			
 			Segment segment1(point1, point2);
 			Segment segment2(point2, point3);
 			Segment segment3(point1, point3);
