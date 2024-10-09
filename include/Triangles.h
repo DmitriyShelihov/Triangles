@@ -1,7 +1,12 @@
 #pragma once 
 
+#include <iostream>
+#include <cmath>
+
+#define DBL_EPSILON 2.2204460492503131e-016
+
 int compare_double(double a, double b) {
-	if (std::fabs(a-b) < DBL_EPSILON * fmax(fabs(a), fabs(b)))
+	if (std::fabs(a-b) <= DBL_EPSILON*std::fabs(std::max(a, b)))
 		return 0;
 	if (a > b)
 		return 1;
@@ -28,80 +33,13 @@ class Point {
 		bool equal(const Point rhs) {
 			return (compare_double(x, rhs.x) == 0 && compare_double(y, rhs.y) == 0 && compare_double(z, rhs.z) == 0);
 		}
-
 };
 
-class Segment {
-	private:
-		Point point1;
-		Point point2;
-	public:
-		Snippet (Point _point1, Point _point2) 
-			: point1(_point1), point2(_point2) {}
-		double length () {
-			return std::sqrt(std::pow(point1.x-point2.x, 2) + std::pow(point1.y-point2.y, 2) + std::pow(point1.z-point2.z, 2));
-		}
-		
-		bool valid() {
-			return point1.valid() && point2.valid();
-		}
-		void print() {
-			std::cout << "Segment { ";
-			point1.print();
-			std::cout << ", ";
-			point2.print();
-			std::cout << " }";
-		}
-		bool point_belongs_segment(Point point) {
-			return (point.x-point1.x) * (point2.y-point1.y) == (point.y-point1.y) * (point2.x-point1.x) &&
-				   (point.y-point1.y) * (point2.z-point1.z) == (point.z-point1.z) * (point2.y-point1.y) &&
-				   (point.x-point1.x) * (point2.z-point1.z) == (point.z-point1.z) * (point2.x-point1.x) &&
-				   std::fabs(point.x-point2.x) <= std::fabs(point1.x-point2.x) && 
-				   std::fabs(point.x-point1.x) <= std::fabs(point1.x-point2.x) &&
-				   std::fabs(point.y-point2.y) <= std::fabs(point1.y-point2.y) &&
-				   std::fabs(point.y-point1.y) <= std::fabs(point1.y-point2.y) &&
-				   std::fabs(point.z-point2.z) <= std::fabs(point1.z-point2.z) &&
-				   std::fabs(point.z-point1.z) <= std::fabs(point1.z-point2.z);
-		}
-		bool point_belongs_same_segment_line(Point point) {
-			return (point.x-point1.x) * (point2.y-point1.y) == (point.y-point1.y) * (point2.x-point1.x) &&
-                   (point.y-point1.y) * (point2.z-point1.z) == (point.z-point1.z) * (point2.y-point1.y) &&
-                   (point.x-point1.x) * (point2.z-point1.z) == (point.z-point1.z) * (point2.x-point1.x);
-		}
-	
-}
-
-class Triangle {	
-	private: 
-		Point point1;
-		Point point2;
-		Point point3;
-	public:
-		Triangle (Point _point1, Point _point2, Point _point3) 
-			: point1(_point1), point2(_point2), point3(_point3) {}
-		bool valid() {
-			return point1.valid() && point2.valid() && point3.valid() && !point1.equal(point2) && !point1.equal(point3) && !point3.equal(point2);
-		}
-		void print() {
-			std::cout << "Triangle { ";
-			point1.print();
-			std::cout << ", ";
-			point2.print();
-			std::cout << ", ";
-			point3.print();
-			std::cout << " }";
-		}
-		bool degenerate_triangle() {
-			Segment side (point1, point2);
-			return side.point_belongs_same_segment_line(Point point3); 
-		}
-}
-
 class Line {
-	public:
+	private:
 		Point point1;
 		Point point2;
-	private:
+	public:
 		Line (Point _point1, Point _point2) 
 			: point1(_point1), point2(_point2) {}
 		bool valid() {
@@ -138,11 +76,11 @@ class Line {
 			double b1 = line_1.b(); double b2 = line_2.b();
 			double c1 = line_1.c(); double c2 = line_2.c();
 			
-			if (compare_doubles(a2, 0) == 0 && compare_doubles(a1, 0) == 0) {
-				if (compare_doubles(b2, 0) == 0 && compare_doubles(b1, 0) == 0) 
+			if (compare_double(a2, 0) == 0 && compare_double(a1, 0) == 0) {
+				if (compare_double(b2, 0) == 0 && compare_double(b1, 0) == 0) 
 					return 1;
-				else if (compare_doubles(b2, 0) != 0 && compare_doubles(b1, 0) != 0) {
-					if (compare_doubles(c1, b1*c2/b2) == 0)
+				else if (compare_double(b2, 0) != 0 && compare_double(b1, 0) != 0) {
+					if (compare_double(c1, b1*c2/b2) == 0)
 						return 1;
 					else
 						return 0;
@@ -150,60 +88,28 @@ class Line {
 				else
 					return 0;
 			}
-			else if (compare_doubles(a2, 0) != 0 && compare_doubles(a1, 0) != 0) {
-				if (compare_doubles(b1, b2*a1/a2) == 0 && compare_doubles(c1, c2*a1/a2) == 0)
+			else if (compare_double(a2, 0) != 0 && compare_double(a1, 0) != 0) {
+				if (compare_double(b1, b2*a1/a2) == 0 && compare_double(c1, c2*a1/a2) == 0)
 					return 1;
 				else
 					return 0;
 			}
 			return 0;
   		}
+  		double point_distance_to_line(Point point){
+            double x_0 = point1.x;
+            double y_0 = point1.y;
+            double z_0 = point1.z;
 
-  		Point lines_intersection_on_plane(Line line_1) {
-			Line line_2 (point1, point2);
-			Point point {};
-			if (line_2.is_line_parallel(line_1))
-				return point;
-			double a1 = line_1.a(); double a2 = line_2.a();
-			double b1 = line_1.b(); double b2 = line_2.b();
-            double c1 = line_1.c(); double c2 = line_2.c();
-			double x1 = line_1.start_point().x; double y1 = line_1.start_point().y; double z1 = line_1.start_point().z;
-			double x3 = point1.x; double y3 = point1.y; double z3 = point1.z;
+            double a = point2.x-point1.x;
+            double b = point2.y-point1.y;
+ 			double c = point2.z-point1.z;
 
-			if (compare_doubles(a1, 0) != 0) {
-				if (compare_doubles(a2, 0) != 0) {
-					if (compare_doubles(b1, 0) != 0) {
-						if (compare_doubles(b2, 0) != 0) {
-							point.y = (x3*b2*b1-y3*a2*b1-x1*b1*b2+y1*a1*b2)/(a1*b2-a2*b1);
-							point.x = (a1*(point.y-y1)+x1*b1)/b1;
-							if (compare_doubles(c1, 0) != 0) { 
-								point.z = (point.y-y1)*c1/b1 + z1;
-								return point;
-							}
-							if (compare_doubles(c2, 0) != 0) {
-								point.z = (point.y-y3)*c2/b2 + z3;
-								return point;
-							}
-							point.z = z1;
-							return point;
-							
-						} else {
-							//
-						}
-					} else {
-					
-					}
-				} else {
-
-				}
-
-			} else {
-
-
-			}
-		}
-
-}
+            return std::sqrt((std::pow((y_0-point.y)*c-(z_0-point.z)*b, 2) + 
+            	   std::pow(c*(x_0-point.x)-a*(z_0-point.z), 2) + 
+            	   std::pow((x_0-point.x)*b-a*(y_0-point.y), 2))/(a*a+b*b+c*c));
+     	}	
+};
 
 class Plane {
 	private:
@@ -236,7 +142,7 @@ class Plane {
 		}
 
 		double C() {
-			return (point3.y * (point2.x-point1.x) + point1.y * (point3.x-point2.x) + point2.y * (point1.x-point3.x);
+			return point3.y * (point2.x-point1.x) + point1.y * (point3.x-point2.x) + point2.y * (point1.x-point3.x);
 		}
 		
 		double D() {
@@ -261,8 +167,9 @@ class Plane {
 				if (compare_double(A2, 0) == 0) {
 					if (compare_double(B1, 0) == 0) {
 						if (compare_double(B2, 0) != 0) {		//planes are not parallel
-							point_1.z = -D2/C2;
-							point_1.y = -(C1 * point_1.z + D1)/B1;
+							printf("plane_intersection: at compare_double(B2, 0)\n");
+							point_1.z = -D1/C1;
+							point_1.y = -(C2 * point_1.z + D2)/B2;
 							point_1.x = 0;
 						}
 					}
@@ -293,7 +200,7 @@ class Plane {
 			else if (compare_double(A1*C2-C1*A2, 0) != 0) {
 				point_1.z = (D1*A2-D2*A1)/(A1*C2-C1*A2);
 				point_1.y = 0;
-				point_1.x = -(C1*z+D1)/A1;
+				point_1.x = -(C1*point_1.z+D1)/A1;
 			}
 			
 			if (point_1.valid()) {
@@ -307,4 +214,131 @@ class Plane {
 		}
 	
 		
-}
+};
+
+class Segment {
+	private:
+		Point point1;
+		Point point2;
+	public:
+		Segment (Point _point1, Point _point2) 
+			: point1(_point1), point2(_point2) {}
+		double length () {
+			return std::sqrt(std::pow(point1.x-point2.x, 2) + std::pow(point1.y-point2.y, 2) + std::pow(point1.z-point2.z, 2));
+		}
+		
+		bool valid() {
+			return point1.valid() && point2.valid();
+		}
+		void print() {
+			std::cout << "Segment { ";
+			point1.print();
+			std::cout << ", ";
+			point2.print();
+			std::cout << " }";
+		}
+		bool point_belongs_segment(Point point) {
+			return (point.x-point1.x) * (point2.y-point1.y) == (point.y-point1.y) * (point2.x-point1.x) &&
+				   (point.y-point1.y) * (point2.z-point1.z) == (point.z-point1.z) * (point2.y-point1.y) &&
+				   (point.x-point1.x) * (point2.z-point1.z) == (point.z-point1.z) * (point2.x-point1.x) &&
+				   std::fabs(point.x-point2.x) <= std::fabs(point1.x-point2.x) && 
+				   std::fabs(point.x-point1.x) <= std::fabs(point1.x-point2.x) &&
+				   std::fabs(point.y-point2.y) <= std::fabs(point1.y-point2.y) &&
+				   std::fabs(point.y-point1.y) <= std::fabs(point1.y-point2.y) &&
+				   std::fabs(point.z-point2.z) <= std::fabs(point1.z-point2.z) &&
+				   std::fabs(point.z-point1.z) <= std::fabs(point1.z-point2.z);
+		}
+		bool point_belongs_same_segment_line(Point point) {
+			return (point.x-point1.x) * (point2.y-point1.y) == (point.y-point1.y) * (point2.x-point1.x) &&
+                   (point.y-point1.y) * (point2.z-point1.z) == (point.z-point1.z) * (point2.y-point1.y) &&
+                   (point.x-point1.x) * (point2.z-point1.z) == (point.z-point1.z) * (point2.x-point1.x);
+		}
+		Point intersection_with_line_on_plane (Line line) {							//Line and segment are considered to be on the same plane
+			double a = line.a();
+			double b = line.b();
+			double c = line.c();
+			
+			printf("Testing segment intersection with line\n");
+
+			Point point0 = line.start_point();
+			Point intersection {};
+
+			double h = line.point_distance_to_line(point1);
+				
+			printf("h = %lf\n", h);
+
+			Segment segment(point1, point2);
+
+			double l = segment.length();
+			
+			printf("Segment length: %lf\n", l);
+
+			double A = std::sqrt(a*a+b*b+c*c);
+
+			double cos_alpha = ((point2.x-point1.x)*a + (point2.y-point1.y)*b + (point2.z-point1.z)*c)/(l*A);
+
+			printf("cos %lf\n", cos_alpha);
+
+			if (compare_double(cos_alpha, 1) == 0 || compare_double(cos_alpha, -1) == 0)
+				return intersection;						//segment and line are ||
+			double r = h/(std::sqrt(1-cos_alpha*cos_alpha));
+
+			intersection.x = point1.x + (point2.x-point1.x)*r/l;
+			intersection.y = point1.y + (point2.y-point1.y)*r/l;
+			intersection.z = point1.z + (point2.z-point1.z)*r/l;
+			
+			if (line.point_belongs_line(intersection))
+				return intersection;
+			else {
+				Point default_p {};
+				return default_p;			//segment does not cross the line
+			}	
+		}
+	
+};
+
+class Triangle {	
+	private: 
+		Point point1;
+		Point point2;
+		Point point3;
+	public:
+		Triangle (Point _point1, Point _point2, Point _point3) 
+			: point1(_point1), point2(_point2), point3(_point3) {}
+		bool valid() {
+			return point1.valid() && point2.valid() && point3.valid() && !point1.equal(point2) && !point1.equal(point3) && !point3.equal(point2);
+		}
+		void print() {
+			std::cout << "Triangle { ";
+			point1.print();
+			std::cout << ", ";
+			point2.print();
+			std::cout << ", ";
+			point3.print();
+			std::cout << " }";
+		}
+		bool degenerate_triangle() {
+			Segment side (point1, point2);
+			return side.point_belongs_same_segment_line(point3); 
+		}
+		Plane plane() {
+			Plane plane(point1, point2, point3);
+			return plane;
+		}
+		bool triangle_intersection(Triangle second) {
+			Plane plane1(point1, point2, point3);
+			Plane plane2 = second.plane();
+			Line line = plane1.plane_intersection(plane2);
+
+			Segment segment1(point1, point2);
+			Segment segment2(point2, point3);
+			Segment segment3(point1, point3);
+
+			Point inter1 = segment1.intersection_with_line_on_plane(line);
+			Point inter2 = segment2.intersection_with_line_on_plane(line);
+			Point inter3 = segment3.intersection_with_line_on_plane(line);
+
+			return (inter1.valid() || inter2.valid() || inter3.valid());
+		}
+};
+
