@@ -24,6 +24,6 @@ int main() {
 	
 	printf("\n");
 
-	std::cout << first.triangle_intersection(second) << std::endl;
+	std::cout << "answer is:"  << first.triangle_intersection(second) << std::endl;
 	return 0;
 }
