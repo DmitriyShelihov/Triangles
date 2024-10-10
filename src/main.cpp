@@ -1,12 +1,12 @@
 #include "Triangles.h" 
 
 int main() {
-	Point point1(6, 0, 0);
-	Point point2(-3, 5, 0);
-	Point point3(-3, -5, 0);
-	Point point4(0, 4, 4);
-	Point point5(0, -4, 4);
-	Point point6(0, 0, -4);
+	Point point1(0,0,0);
+	Point point2(0,6,0);
+	Point point3(7,0,0);
+	Point point4(1,1,0);
+	Point point5(1,2,0);
+	Point point6(2,1,0);
 	
 	Triangle first(point1, point2, point3);
 	
@@ -23,14 +23,6 @@ int main() {
 	line.print();
 	
 	printf("\n");
-
-	Segment seg1(point1, point3);
-	Segment seg2(point4, point6);
-	Line line_xxx (point4, point6);
-
-	Point point_xxx = seg1.intersection_with_line_on_plane(line_xxx);
-
-	point_xxx.print();
 
 	std::cout << first.triangle_intersection(second) << std::endl;
 	return 0;
