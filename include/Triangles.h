@@ -84,7 +84,7 @@ class Triangle {
 					return false;
 				}
 			}
-		
+			
 			Point inter1 = segment1.intersection_with_line_on_plane(line);
 			Point inter2 = segment2.intersection_with_line_on_plane(line);
 			Point inter3 = segment3.intersection_with_line_on_plane(line);
@@ -107,7 +107,7 @@ class Triangle {
 
 				if (k == 4) {
 					if (!mas[0].equal(mas[1]) && !mas[0].equal(mas[2]) && !mas[0].equal(mas[3])				 
-				 	&& !mas[1].equal(mas[2]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3]) {		//4 different points of intersection
+				 	&& !mas[1].equal(mas[2]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3])) {		//4 different points of intersection
 					
 						if ((mas[0].central_point(mas[2], mas[3]) == 0 && mas[1].central_point(mas[2], mas[3]) == 0) ||
 					    	(mas[2].central_point(mas[0], mas[1]) == 0 && mas[3].central_point(mas[0], mas[1]) == 0) ||
@@ -115,7 +115,6 @@ class Triangle {
 					    	(mas[0].central_point(mas[2], mas[3]) == 0 && mas[2].central_point(mas[0], mas[1]) == 0) ||
 					   	 	(mas[1].central_point(mas[2], mas[3]) == 0 && mas[3].central_point(mas[0], mas[1]) == 0) ||
 					    	(mas[1].central_point(mas[2], mas[3]) == 0 && mas[2].central_point(mas[0], mas[1]) == 0))
-			
 							return true;
 						return false;
 					}
@@ -125,11 +124,11 @@ class Triangle {
 						if ((mas[0].equal(inter1) && mas[1].equal(inter2)) ||
 							(mas[0].equal(inter1) && mas[1].equal(inter3)) ||
 							(mas[0].equal(inter2) && mas[1].equal(inter3))) {			//two from 3 points belongs to 1 triangle
-							if (mas[2].central_point(mas[0], mas[1]))
+							if (mas[2].central_point(mas[0], mas[1]) == 0)
 								return true;
 							return false;
 						}
-						if (mas[0].central_point(mas[1], mas[2]))
+						if (mas[0].central_point(mas[1], mas[2]) == 0)
 							return true;
 						return false;
 					}
@@ -147,14 +146,122 @@ class Triangle {
 						if (!mas[0].equal(mas[3]) && !mas[0].equal(mas[4]) && !mas[0].equal(mas[5]) &&
 							!mas[1].equal(mas[3]) && !mas[1].equal(mas[4]) && !mas[1].equal(mas[5]) &&
 							!mas[2].equal(mas[3]) && !mas[2].equal(mas[4]) && !mas[2].equal(mas[5])) {
-							//TODO where we have 4 different points
+							Point new_mas[4];
+							if (mas[0].equal(mas[1])){
+								new_mas[0] = mas[0];
+								new_mas[1] = mas[2];
+							} else {
+								new_mas[0] = mas[0];
+								new_mas[1] = mas[1];
+							}
+							if (mas[3].equal(mas[4])){
+                                new_mas[2] = mas[3];
+                                new_mas[3] = mas[5];
+                            } else {
+                                new_mas[2] = mas[3];
+                                new_mas[3] = mas[4];
+                            }
+                            if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
+                               (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
+                               (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
+								return true;
+                            }
+                            return false;
 						}
-						
+						return true;
+					} else if (k == 5) {
+						if (!mas[0].equal(mas[3]) && !mas[0].equal(mas[4]) && 
+                        	!mas[1].equal(mas[3]) && !mas[1].equal(mas[4]) && 
+                            !mas[2].equal(mas[3]) && !mas[2].equal(mas[4])) {
+								
+							Point new_mas[4];
+
+							if (mas[0].equal(mas[1])){
+								printf("here\n");
+                            	new_mas[0] = mas[0];
+                                new_mas[1] = mas[2];
+                            } else {
+                                new_mas[0] = mas[0];
+                                new_mas[1] = mas[1];
+                            }
+							new_mas[2] = mas[3];
+							new_mas[3] = mas[4];
+							
+							if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
+                            	(new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
+                                (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
+                               	printf("here\n");
+                                return true;
+                          	}
+                          	return false;
+						}
+						return true;
+					} else if (k == 4) {
+						if (!mas[0].equal(mas[3]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3])){
+							Point new_mas[3];
+                            if (mas[0].equal(mas[1])){
+                            	new_mas[0] = mas[0];
+                                new_mas[1] = mas[2];
+                            } else {
+                                new_mas[0] = mas[0];
+                                new_mas[1] = mas[1];
+                            }
+                            new_mas[2] = mas[3];
+                            if (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0)
+                            	return true;
+                            return false;
+						}
+						return true;
+					} else {
+						return false;
+					}
+				}
+			 else {		//side of second triangle is on the line
+				if (k == 5) {
+					if (!mas[2].equal(mas[0]) && !mas[2].equal(mas[1]) && 
+                        !mas[3].equal(mas[0]) && !mas[3].equal(mas[1]) && 
+                        !mas[4].equal(mas[0]) && !mas[4].equal(mas[1])) {
+							
+						Point new_mas[4];
+						if (mas[2].equal(mas[3])){
+                            new_mas[2] = mas[2];
+                            new_mas[3] = mas[4];
+                        } else {
+                            new_mas[2] = mas[2];
+                            new_mas[3] = mas[3];
+                        }
+						new_mas[0] = mas[0];
+						new_mas[1] = mas[1];
+							
+						if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
+                           (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
+                           (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
+                           return true;
+                        }
+                        return false;
+					}
+					return true;
+				} else if (k == 4) {
+						if (!mas[1].equal(mas[0]) && !mas[2].equal(mas[0]) && !mas[3].equal(mas[0])){
+							Point new_mas[3];
+                            if (mas[1].equal(mas[2])){
+                            	new_mas[1] = mas[1];
+                                new_mas[2] = mas[3];
+                            } else {
+                                new_mas[1] = mas[1];
+                                new_mas[2] = mas[2];
+                            }
+                            new_mas[0] = mas[0];
+                            if (new_mas[0].central_point(new_mas[1], new_mas[2]) == 0)
+                            	return true;
+                            return false;
+						}
+						return true;
+					} else {
+						return false;
 					}
 				}
 			}
-
-
 		}
 };
 
