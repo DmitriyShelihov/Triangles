@@ -2,10 +2,10 @@
 #include <iostream>
 #include <cmath>
 
-#define DBL_EPSILON 2.2204460492503131e-016
+#define DBL_EPSILON 1e-10
 
 int compare_double(double a, double b) {
-	if (std::fabs(a-b) <= DBL_EPSILON*std::fabs(std::max(a, b)))
+	if (std::fabs(a-b) <= DBL_EPSILON)
 		return 0;
 	if (a > b)
 		return 1;
@@ -16,6 +16,12 @@ int compare_double(double a, double b) {
 #include "Line.h"
 #include "Plane.h"
 #include "Segment.h"
+
+struct Triangle_vert {
+	Point p1;
+	Point p2;
+	Point p3;
+};
 
 struct Triangle_sides {
 	Segment seg1;
@@ -29,6 +35,7 @@ class Triangle {
 		Point point2;
 		Point point3;
 	public:
+		Triangle () {}
 		Triangle (Point _point1, Point _point2, Point _point3) 
 			: point1(_point1), point2(_point2), point3(_point3) {}
 		bool valid() {
@@ -57,6 +64,29 @@ class Triangle {
 			Segment seg3(point1, point3);
 			return {seg1, seg2, seg3};
 		}
+		Triangle_vert get_triangle_vert() {
+			return {point1, point2, point3};
+		}
+		bool point_inside(Point point) {			//point and triangle on the same plane
+			Line line1(point1, point);
+			Line line2(point2, point);
+			Line line3(point3, point);
+			
+			Segment seg1(point2, point3);
+			Segment seg2(point1, point3);
+			Segment seg3(point1, point2);
+
+			Point p1 = seg1.intersection_with_line_on_plane(line1);
+			Point p2 = seg2.intersection_with_line_on_plane(line2);
+			Point p3 = seg3.intersection_with_line_on_plane(line3);
+
+			if ((p1.valid() && point.central_point(point1, p1) == 0) ||
+				(p2.valid() && point.central_point(point2, p2) == 0) ||
+				(p3.valid() && point.central_point(point3, p3) == 0)) {
+				return true;
+			}
+			return false;
+		}
 		bool triangle_intersection(Triangle second) {
 			Plane plane1(point1, point2, point3);
 			Plane plane2 = second.plane();
@@ -65,20 +95,34 @@ class Triangle {
 			Segment segment1(point1, point2);
 			Segment segment2(point2, point3);
             Segment segment3(point1, point3);
-			Triangle_sides sides = second.get_triangle_sides();	
+			Triangle_sides sides = second.get_triangle_sides();
+			Triangle_vert vertexies = second.get_triangle_vert();
+			Point point4 = vertexies.p1;
+			Point point5 = vertexies.p2;
+			Point point6 = vertexies.p3;
+			
+			printf("Here\n");
+			point4.print();
+
+			line.print();
 
 			if (!line.valid()) {						//planes are parallel or equal
-				if (plane1.equal(plane2)) {
-
-					return ((segment1.intersection_with_segment_on_plane(sides.seg1)).valid() || 
-							(segment1.intersection_with_segment_on_plane(sides.seg2)).valid() ||
-							(segment1.intersection_with_segment_on_plane(sides.seg3)).valid() ||
-							(segment2.intersection_with_segment_on_plane(sides.seg1)).valid() ||
-							(segment2.intersection_with_segment_on_plane(sides.seg2)).valid() ||
-							(segment2.intersection_with_segment_on_plane(sides.seg3)).valid() || 
-							(segment3.intersection_with_segment_on_plane(sides.seg1)).valid() ||
-							(segment3.intersection_with_segment_on_plane(sides.seg2)).valid() ||
-							(segment3.intersection_with_segment_on_plane(sides.seg3)).valid());
+				if (plane1.equal(plane2)) {				//equal
+					if ((segment1.intersection_with_segment_on_plane(sides.seg1)).valid() || 
+						(segment1.intersection_with_segment_on_plane(sides.seg2)).valid() ||
+						(segment1.intersection_with_segment_on_plane(sides.seg3)).valid() ||
+						(segment2.intersection_with_segment_on_plane(sides.seg1)).valid() ||
+						(segment2.intersection_with_segment_on_plane(sides.seg2)).valid() ||
+						(segment2.intersection_with_segment_on_plane(sides.seg3)).valid() || 
+						(segment3.intersection_with_segment_on_plane(sides.seg1)).valid() ||
+						(segment3.intersection_with_segment_on_plane(sides.seg2)).valid() ||
+						(segment3.intersection_with_segment_on_plane(sides.seg3)).valid()) {
+							return true;
+					} 
+					if (second.point_inside(point1) && second.point_inside(point2) && second.point_inside(point3)) {
+						return true;
+					}
+					return false;
 				}
 				else {
 					return false;
@@ -91,20 +135,83 @@ class Triangle {
 			Point inter4 = sides.seg1.intersection_with_line_on_plane(line);
 			Point inter5 = sides.seg2.intersection_with_line_on_plane(line);
 			Point inter6 = sides.seg3.intersection_with_line_on_plane(line);
+			
+			printf("Intersections\n");
+			inter1.print();
+			inter2.print();
+			inter3.print();
+
+			inter4.print();
+			inter5.print();
+			inter6.print();
 
 			int k = 0;
 			Point mas[6];
 			
-			if (inter1.valid()){mas[k] = inter1; k++;}
-			if (inter2.valid()){mas[k] = inter2; k++;}
-			if (inter3.valid()){mas[k] = inter3; k++;}
-			if (inter4.valid()){mas[k] = inter4; k++;}
-			if (inter5.valid()){mas[k] = inter5; k++;}
-			if (inter6.valid()){mas[k] = inter6; k++;}
+			if (line.point_belongs_line(point1) && !line.point_belongs_line(point2) && !line.point_belongs_line(point3)) {
+ 				k++;
+ 				mas[0] = point1;
+ 				if (inter2.valid()){
+					k++;
+					mas[1] = inter2;
+ 				}
+            } else if (line.point_belongs_line(point2) && !line.point_belongs_line(point1) && !line.point_belongs_line(point3)) {
+				k++;
+				mas[0] = point2;
+				if (inter3.valid()) {
+					k++;
+					mas[1] = inter3;
+				}
+            } else if (line.point_belongs_line(point3) && !line.point_belongs_line(point1) && !line.point_belongs_line(point2)) {
+				k++;
+				mas[0] = point3;
+				if (inter1.valid()) {
+					k++;
+					mas[1] = inter1;
+				}
+			} else {
+				if (inter1.valid()){mas[k] = inter1; k++;}
+             	if (inter2.valid()){mas[k] = inter2; k++;}
+             	if (inter3.valid()){mas[k] = inter3; k++;}
+			}
 			
+			printf("After 1 triangle\n k = %d\n", k);
+			for (int i = 0; i < k; i++)
+				mas[i].print();
+
+			if (line.point_belongs_line(point4) && !line.point_belongs_line(point5) && !line.point_belongs_line(point6)) {
+                 mas[k] = point4;
+                 k++;
+                 if (inter5.valid()){
+                     mas[k] = inter5;
+                     k++;
+                 }
+             } else if (line.point_belongs_line(point5) && !line.point_belongs_line(point4) && !line.point_belongs_line(point6)) {
+                 mas[k] = point5;
+                 k++;
+                 if (inter6.valid()) {
+                     mas[k] = inter6;
+                     k++;
+                 }
+             } else if (line.point_belongs_line(point6) && !line.point_belongs_line(point4) && !line.point_belongs_line(point5)) {
+                 mas[k] = point6;
+                 k++;
+                 if (inter4.valid()) {
+                     mas[k] = inter4;
+                     k++;
+                 }
+             } else {
+                 if (inter4.valid()){mas[k] = inter4; k++;}
+                 if (inter5.valid()){mas[k] = inter5; k++;}
+                 if (inter6.valid()){mas[k] = inter6; k++;}
+             }
+
+            std::cout << "k = " << k;
+            for (int i = 0; i < k; i++)
+            	mas[i].print();
+
 			if (!segment1.belongs_to_line(line) && !segment2.belongs_to_line(line) && !segment3.belongs_to_line(line) &&
                 !sides.seg1.belongs_to_line(line) && !sides.seg2.belongs_to_line(line) && !sides.seg3.belongs_to_line(line)) {
-
 				if (k == 4) {
 					if (!mas[0].equal(mas[1]) && !mas[0].equal(mas[2]) && !mas[0].equal(mas[3])				 
 				 	&& !mas[1].equal(mas[2]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3])) {		//4 different points of intersection
@@ -217,6 +324,7 @@ class Triangle {
 					}
 				}
 			 else {		//side of second triangle is on the line
+				printf("Here\n");
 				if (k == 5) {
 					if (!mas[2].equal(mas[0]) && !mas[2].equal(mas[1]) && 
                         !mas[3].equal(mas[0]) && !mas[3].equal(mas[1]) && 

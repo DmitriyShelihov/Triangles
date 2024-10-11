@@ -21,22 +21,22 @@ class Point {
 			return (compare_double(x, rhs.x) == 0 && compare_double(y, rhs.y) == 0 && compare_double(z, rhs.z) == 0);
 		}
 		int central_point(Point p1, Point p2) {			//3 points considered to be on the same line and different
-			if ((p1.x <= x && x <= p2.x &&
-				 p1.y <= y && y <= p2.y &&
-				 p1.z <= z && z <= p2.z) ||
-				(p1.x >= x && x >= p2.x &&
-                 p1.y >= y && y >= p2.y &&
-                 p1.z >= z && z >= p2.z))
-			
+			if (((compare_double(p1.x, x) == 0 || compare_double(p1.x, x) == 2) && (compare_double(x, p2.x) == 0 || compare_double(x, p2.x) == 2) &&
+				 (compare_double(p1.y, y) == 0 || compare_double(p1.y, y) == 2) && (compare_double(y, p2.y) == 0 || compare_double(y, p2.y) == 2) &&
+				 (compare_double(p1.z, z) == 0 || compare_double(p1.z, z) == 2) && (compare_double(z, p2.z) == 0 || compare_double(z, p2.z) == 2)) ||
+				((compare_double(p1.x, x) == 0 || compare_double(p1.x, x) == 1) && (compare_double(x, p2.x) == 0 || compare_double(x, p2.x) == 1) &&
+				 (compare_double(p1.y, y) == 0 || compare_double(p1.y, y) == 1) && (compare_double(y, p2.y) == 0 || compare_double(y, p2.y) == 1) &&
+	   			 (compare_double(p1.z, z) == 0 || compare_double(p1.z, z) == 1) && (compare_double(z, p2.z) == 0 || compare_double(z, p2.z) == 1))) {			
 				return 0;
-			if ((x <= p1.x && p1.x <= p2.x &&
-                 y <= p1.y && p1.y <= p2.y &&
-                 z <= p1.z && p1.z <= p2.z) ||
-                (x >= p1.x && p1.x >= p2.x &&
-                 y >= p1.y && p1.y >= p2.y &&
-                 z >= p1.z && p1.z >= p2.z))
-                 
+			}
+			if (((compare_double(x, p1.x) == 0 || compare_double(x, p1.x) == 2) && (compare_double(p1.x, p2.x) == 0 || compare_double(p1.x, p2.x) == 2) &&
+                  (compare_double(y, p1.y) == 0 || compare_double(y, p1.y) == 2) && (compare_double(p1.y, p2.y) == 0 || compare_double(p1.y, p2.y) == 2) &&
+                  (compare_double(z, p1.z) == 0 || compare_double(z, p1.z) == 2) && (compare_double(p1.z, p2.z) == 0 || compare_double(p1.z, p2.z) == 2)) ||
+                 ((compare_double(x, p1.x) == 0 || compare_double(x, p1.x) == 1) && (compare_double(p1.x, p2.x) == 0 || compare_double(p1.x, p2.x) == 1) &&
+                  (compare_double(y, p1.y) == 0 || compare_double(y, p1.y) == 1) && (compare_double(p1.y, p2.y) == 0 || compare_double(p1.y, p2.y) == 1) &&
+                  (compare_double(z, p1.z) == 0 || compare_double(z, p1.z) == 1) && (compare_double(p1.z, p2.z) == 0 || compare_double(p1.z, p2.z) == 1))) {
                  return 1;
+          	}
          	return 2;
 		}
 };

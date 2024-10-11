@@ -38,8 +38,8 @@ class Plane {
 		}
 		
 		double D() {
-			return point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
-                   point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x;
+			return -(point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
+                   point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x);
 		}
 
 		bool equal(Plane plane) {
@@ -61,7 +61,7 @@ class Plane {
 			double N1 = B1 * C2 - C1 * B2;				//line direction vector
 			double N2 = C1 * A2 - A1 * C2;				
 			double N3 = A1 * B2 - B1 * A2;
-
+			
 			if (compare_double(A1, 0) == 0) {
 				if (compare_double(A2, 0) == 0) {
 					if (compare_double(B1, 0) == 0) {

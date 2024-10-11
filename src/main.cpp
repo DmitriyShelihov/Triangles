@@ -1,16 +1,42 @@
 #include "Triangles.h" 
 
 int main() {
-	Point point1(0, 1, 0);
-	Point point2(2, 2, 0);
-	Point point3(2, 4, 0);
-	Point point4(0, 0, 0);
-	Point point5(0, 6, 0);
-	Point point6(0, 10, 10);
+	
+	int N = 0;
 
-	Triangle first(point1, point2, point3);
-	Triangle second(point6, point4, point5);
+	std::cin >> N;
 
-	std::cout << "answer is:"  << first.triangle_intersection(second) << std::endl;
+	Triangle mas[N];
+
+	for (int i = 0; i < N; i++) {
+		double x1 = 0; double y1 = 0; double z1 = 0;
+		double x2 = 0; double y2 = 0; double z2 = 0;
+		double x3 = 0; double y3 = 0; double z3 = 0;
+
+		std::cin >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
+
+		Point p1(x1, y1, z1);
+		Point p2(x2, y2, z2);
+		Point p3(x3, y3, z3);
+		
+		Triangle T (p1, p2, p3);
+		mas[i] = T;
+	}
+
+	int mas1[100];
+	int p = 0;
+	printf("====================================================\n");
+	for (int i = 0; i < N-1; i++) {
+		for (int j = i + 1; j < N; j++) {
+			if (mas[i].triangle_intersection(mas[j])) {
+				mas1[p] = i;
+				p++;
+				std::cout << "ANSWER:{{{{{{{{{{{{{{{{{"  << i << " with " << j << "}}}}}}}}}}}}}}}}}" << "\n";				
+			}
+		}
+	}
+	printf("================================================\n");
+	for (int i = 0; i < p; i++)
+		std::cout << mas1[i] << " ";
 	return 0;
 }
