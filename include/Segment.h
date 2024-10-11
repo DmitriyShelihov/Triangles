@@ -91,12 +91,18 @@ class Segment {
 
 			if (!seg.point_belongs_same_segment_line(point))
 				return false;
-			return ((point1.x <= point.x && point.x <= point2.x &&
-					 point1.y <= point.y && point.y <= point2.y &&
-				  	 point1.z <= point.z && point.z <= point2.x) ||
-			   		(point1.x >= point.x && point.x >= point2.x &&
-			         point1.y >= point.y && point.y >= point2.y &&
-			         point1.z >= point.z && point.z >= point2.z));
+			return (((compare_double(point1.x, point.x) == 0 || compare_double(point1.x, point.x) == 2) && 
+					 (compare_double(point.x, point2.x) == 0 || compare_double(point.x, point2.x) == 2) &&
+					 (compare_double(point1.y, point.y) == 0 || compare_double(point1.y, point.y) == 2) &&
+					 (compare_double(point.y, point2.y) == 0 || compare_double(point.y, point2.y) == 2) &&
+   					 (compare_double(point1.z, point.z) == 0 || compare_double(point1.z, point.z) == 2) &&
+                     (compare_double(point.z, point2.z) == 0 || compare_double(point.z, point2.z) == 2)) ||
+			   		((compare_double(point1.x, point.x) == 0 || compare_double(point1.x, point.x) == 1) && 
+					 (compare_double(point.x, point2.x) == 0 || compare_double(point.x, point2.x) == 1) &&
+ 			   		 (compare_double(point1.y, point.y) == 0 || compare_double(point1.y, point.y) == 1) && 
+                     (compare_double(point.y, point2.y) == 0 || compare_double(point.y, point2.y) == 1) &&
+					 (compare_double(point1.z, point.z) == 0 || compare_double(point1.z, point.z) == 1) && 
+                     (compare_double(point.z, point2.z) == 0 || compare_double(point.z, point2.z) == 1)));
 		}
 		Point intersection_with_segment_on_plane(Segment seg2) {		//segments are considered to be on the same plane
 			Point answer {};
