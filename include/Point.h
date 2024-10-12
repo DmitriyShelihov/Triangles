@@ -20,23 +20,18 @@ class Point {
 		bool equal(const Point rhs) {
 			return (compare_double(x, rhs.x) == 0 && compare_double(y, rhs.y) == 0 && compare_double(z, rhs.z) == 0);
 		}
-		int central_point(Point p1, Point p2) {			//3 points considered to be on the same line and different
-			if (((compare_double(p1.x, x) == 0 || compare_double(p1.x, x) == 2) && (compare_double(x, p2.x) == 0 || compare_double(x, p2.x) == 2) &&
-				 (compare_double(p1.y, y) == 0 || compare_double(p1.y, y) == 2) && (compare_double(y, p2.y) == 0 || compare_double(y, p2.y) == 2) &&
-				 (compare_double(p1.z, z) == 0 || compare_double(p1.z, z) == 2) && (compare_double(z, p2.z) == 0 || compare_double(z, p2.z) == 2)) ||
-				((compare_double(p1.x, x) == 0 || compare_double(p1.x, x) == 1) && (compare_double(x, p2.x) == 0 || compare_double(x, p2.x) == 1) &&
-				 (compare_double(p1.y, y) == 0 || compare_double(p1.y, y) == 1) && (compare_double(y, p2.y) == 0 || compare_double(y, p2.y) == 1) &&
-	   			 (compare_double(p1.z, z) == 0 || compare_double(p1.z, z) == 1) && (compare_double(z, p2.z) == 0 || compare_double(z, p2.z) == 1))) {			
-				return 0;
-			}
-			if (((compare_double(x, p1.x) == 0 || compare_double(x, p1.x) == 2) && (compare_double(p1.x, p2.x) == 0 || compare_double(p1.x, p2.x) == 2) &&
-                  (compare_double(y, p1.y) == 0 || compare_double(y, p1.y) == 2) && (compare_double(p1.y, p2.y) == 0 || compare_double(p1.y, p2.y) == 2) &&
-                  (compare_double(z, p1.z) == 0 || compare_double(z, p1.z) == 2) && (compare_double(p1.z, p2.z) == 0 || compare_double(p1.z, p2.z) == 2)) ||
-                 ((compare_double(x, p1.x) == 0 || compare_double(x, p1.x) == 1) && (compare_double(p1.x, p2.x) == 0 || compare_double(p1.x, p2.x) == 1) &&
-                  (compare_double(y, p1.y) == 0 || compare_double(y, p1.y) == 1) && (compare_double(p1.y, p2.y) == 0 || compare_double(p1.y, p2.y) == 1) &&
-                  (compare_double(z, p1.z) == 0 || compare_double(z, p1.z) == 1) && (compare_double(p1.z, p2.z) == 0 || compare_double(p1.z, p2.z) == 1))) {
-                 return 1;
-          	}
-         	return 2;
+		bool central_point(Point point1, Point point2) {			//3 points considered to be on the same line and different
+			return ((compare_double(std::fabs(x-point2.x), std::fabs(point1.x-point2.x)) == 0 ||
+                   compare_double(std::fabs(x-point2.x), std::fabs(point1.x-point2.x)) == 2) &&
+                  (compare_double(std::fabs(x-point1.x), std::fabs(point1.x-point2.x)) == 0 ||
+                   compare_double(std::fabs(x-point1.x), std::fabs(point1.x-point2.x)) == 2) &&
+                  (compare_double(std::fabs(y-point2.y), std::fabs(point1.y-point2.y)) == 0 ||
+                   compare_double(std::fabs(y-point2.y), std::fabs(point1.y-point2.y)) == 2) &&
+                  (compare_double(std::fabs(y-point1.y), std::fabs(point1.y-point2.y)) == 0 ||
+                   compare_double(std::fabs(y-point1.y), std::fabs(point1.y-point2.y)) == 2) &&
+                  (compare_double(std::fabs(z-point2.z), std::fabs(point1.z-point2.z)) == 0 ||
+                   compare_double(std::fabs(z-point2.z), std::fabs(point1.z-point2.z)) == 2) &&
+                  (compare_double(std::fabs(z-point1.z), std::fabs(point1.z-point2.z)) == 0 ||
+                   compare_double(std::fabs(z-point1.z), std::fabs(point1.z-point2.z)) == 2));
 		}
 };

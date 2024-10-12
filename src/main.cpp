@@ -25,7 +25,6 @@ int main() {
 
 	int mas1[100];
 	int p = 0;
-	printf("====================================================\n");
 	for (int i = 0; i < N-1; i++) {
 		for (int j = i + 1; j < N; j++) {
 			if (mas[i].triangle_intersection(mas[j])) {
@@ -35,8 +34,8 @@ int main() {
 			}
 		}
 	}
-	printf("================================================\n");
+	printf("\n%d\n", p);
 	for (int i = 0; i < p; i++)
-		std::cout << mas1[i] << " ";
+		printf("%d ", mas1[i]);
 	return 0;
 }

@@ -2,12 +2,12 @@
 #include <iostream>
 #include <cmath>
 
-#define DBL_EPSILON 1e-10
+const long double DBL_EPSILON = 1e-10;
 
-int compare_double(double a, double b) {
-	if (std::fabs(a-b) <= DBL_EPSILON)
+int compare_double(const double a, const double b) {
+	if (std::fabs(a-b) < DBL_EPSILON)
 		return 0;
-	if (a > b)
+	if (a-b > DBL_EPSILON)
 		return 1;
 	return 2;
 }
@@ -80,9 +80,9 @@ class Triangle {
 			Point p2 = seg2.intersection_with_line_on_plane(line2);
 			Point p3 = seg3.intersection_with_line_on_plane(line3);
 
-			if ((p1.valid() && point.central_point(point1, p1) == 0) ||
-				(p2.valid() && point.central_point(point2, p2) == 0) ||
-				(p3.valid() && point.central_point(point3, p3) == 0)) {
+			if ((p1.valid() && point.central_point(point1, p1)) ||
+				(p2.valid() && point.central_point(point2, p2)) ||
+				(p3.valid() && point.central_point(point3, p3))) {
 				return true;
 			}
 			return false;
@@ -91,6 +91,12 @@ class Triangle {
 			Plane plane1(point1, point2, point3);
 			Plane plane2 = second.plane();
 			Line line = plane1.plane_intersection(plane2);
+			
+			//debug
+			printf("The line of intersection two triangle planes:");
+			line.print();
+			printf("\n");
+			//debug_end
 
 			Segment segment1(point1, point2);
 			Segment segment2(point2, point3);
@@ -101,12 +107,8 @@ class Triangle {
 			Point point5 = vertexies.p2;
 			Point point6 = vertexies.p3;
 			
-			printf("Here\n");
-			point4.print();
-
-			line.print();
-
-			if (!line.valid()) {						//planes are parallel or equal
+			if (!line.valid()) {//planes are parallel or equal
+			
 				if (plane1.equal(plane2)) {				//equal
 					if ((segment1.intersection_with_segment_on_plane(sides.seg1)).valid() || 
 						(segment1.intersection_with_segment_on_plane(sides.seg2)).valid() ||
@@ -136,15 +138,6 @@ class Triangle {
 			Point inter5 = sides.seg2.intersection_with_line_on_plane(line);
 			Point inter6 = sides.seg3.intersection_with_line_on_plane(line);
 			
-			printf("Intersections\n");
-			inter1.print();
-			inter2.print();
-			inter3.print();
-
-			inter4.print();
-			inter5.print();
-			inter6.print();
-
 			int k = 0;
 			Point mas[6];
 			
@@ -175,10 +168,6 @@ class Triangle {
              	if (inter3.valid()){mas[k] = inter3; k++;}
 			}
 			
-			printf("After 1 triangle\n k = %d\n", k);
-			for (int i = 0; i < k; i++)
-				mas[i].print();
-
 			if (line.point_belongs_line(point4) && !line.point_belongs_line(point5) && !line.point_belongs_line(point6)) {
                  mas[k] = point4;
                  k++;
@@ -205,37 +194,43 @@ class Triangle {
                  if (inter5.valid()){mas[k] = inter5; k++;}
                  if (inter6.valid()){mas[k] = inter6; k++;}
              }
-
-            std::cout << "k = " << k;
-            for (int i = 0; i < k; i++)
-            	mas[i].print();
+			
+			//debug
+			printf("k = %d\nPoints are:", k);
+			for (int i = 0; i < k; i++)
+				mas[i].print();
+			printf("\n");
+			//debug end
 
 			if (!segment1.belongs_to_line(line) && !segment2.belongs_to_line(line) && !segment3.belongs_to_line(line) &&
                 !sides.seg1.belongs_to_line(line) && !sides.seg2.belongs_to_line(line) && !sides.seg3.belongs_to_line(line)) {
 				if (k == 4) {
 					if (!mas[0].equal(mas[1]) && !mas[0].equal(mas[2]) && !mas[0].equal(mas[3])				 
 				 	&& !mas[1].equal(mas[2]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3])) {		//4 different points of intersection
-					
-						if ((mas[0].central_point(mas[2], mas[3]) == 0 && mas[1].central_point(mas[2], mas[3]) == 0) ||
-					    	(mas[2].central_point(mas[0], mas[1]) == 0 && mas[3].central_point(mas[0], mas[1]) == 0) ||
-					    	(mas[0].central_point(mas[2], mas[3]) == 0 && mas[3].central_point(mas[0], mas[1]) == 0) ||
-					    	(mas[0].central_point(mas[2], mas[3]) == 0 && mas[2].central_point(mas[0], mas[1]) == 0) ||
-					   	 	(mas[1].central_point(mas[2], mas[3]) == 0 && mas[3].central_point(mas[0], mas[1]) == 0) ||
-					    	(mas[1].central_point(mas[2], mas[3]) == 0 && mas[2].central_point(mas[0], mas[1]) == 0))
+						//debug
+
+						printf("Segment doesnt belong line, k = 4, point are not equal\n");
+						//debug end
+						if ((mas[0].central_point(mas[2], mas[3]) && mas[1].central_point(mas[2], mas[3])) ||
+					    	(mas[2].central_point(mas[0], mas[1]) && mas[3].central_point(mas[0], mas[1])) ||
+					    	(mas[0].central_point(mas[2], mas[3]) && mas[3].central_point(mas[0], mas[1])) ||
+					    	(mas[0].central_point(mas[2], mas[3]) && mas[2].central_point(mas[0], mas[1])) ||
+					   	 	(mas[1].central_point(mas[2], mas[3]) && mas[3].central_point(mas[0], mas[1])) ||
+					    	(mas[1].central_point(mas[2], mas[3]) && mas[2].central_point(mas[0], mas[1])))
 							return true;
 						return false;
 					}
-					return true;			//some of points belonged to different triangles are equal
+					return true;													//some of points belonged to different triangles are equal
 				} else if (k == 3) {
 					if (!mas[0].equal(mas[1]) && !mas[1].equal(mas[2]) && !mas[0].equal(mas[2])) {
 						if ((mas[0].equal(inter1) && mas[1].equal(inter2)) ||
 							(mas[0].equal(inter1) && mas[1].equal(inter3)) ||
 							(mas[0].equal(inter2) && mas[1].equal(inter3))) {			//two from 3 points belongs to 1 triangle
-							if (mas[2].central_point(mas[0], mas[1]) == 0)
+							if (mas[2].central_point(mas[0], mas[1]))
 								return true;
 							return false;
 						}
-						if (mas[0].central_point(mas[1], mas[2]) == 0)
+						if (mas[0].central_point(mas[1], mas[2]))
 							return true;
 						return false;
 					}
@@ -268,9 +263,9 @@ class Triangle {
                                 new_mas[2] = mas[3];
                                 new_mas[3] = mas[4];
                             }
-                            if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
-                               (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
-                               (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
+                            if (new_mas[0].central_point(new_mas[2], new_mas[3]) || new_mas[1].central_point(new_mas[2], new_mas[3]) || 
+                               (new_mas[2].central_point(new_mas[0], new_mas[1]) && new_mas[3].central_point(new_mas[0], new_mas[1])) ||
+                               (new_mas[0].central_point(new_mas[2], new_mas[3]) && new_mas[1].central_point(new_mas[2], new_mas[3]))) {
 								return true;
                             }
                             return false;
@@ -284,7 +279,6 @@ class Triangle {
 							Point new_mas[4];
 
 							if (mas[0].equal(mas[1])){
-								printf("here\n");
                             	new_mas[0] = mas[0];
                                 new_mas[1] = mas[2];
                             } else {
@@ -294,10 +288,9 @@ class Triangle {
 							new_mas[2] = mas[3];
 							new_mas[3] = mas[4];
 							
-							if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
-                            	(new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
-                                (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
-                               	printf("here\n");
+							if (new_mas[0].central_point(new_mas[2], new_mas[3]) || new_mas[1].central_point(new_mas[2], new_mas[3]) || 
+                            	(new_mas[2].central_point(new_mas[0], new_mas[1]) && new_mas[3].central_point(new_mas[0], new_mas[1])) ||
+                                (new_mas[0].central_point(new_mas[2], new_mas[3]) && new_mas[1].central_point(new_mas[2], new_mas[3]))) {
                                 return true;
                           	}
                           	return false;
@@ -314,7 +307,7 @@ class Triangle {
                                 new_mas[1] = mas[1];
                             }
                             new_mas[2] = mas[3];
-                            if (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0)
+                            if (new_mas[2].central_point(new_mas[0], new_mas[1]))
                             	return true;
                             return false;
 						}
@@ -324,7 +317,6 @@ class Triangle {
 					}
 				}
 			 else {		//side of second triangle is on the line
-				printf("Here\n");
 				if (k == 5) {
 					if (!mas[2].equal(mas[0]) && !mas[2].equal(mas[1]) && 
                         !mas[3].equal(mas[0]) && !mas[3].equal(mas[1]) && 
@@ -341,9 +333,9 @@ class Triangle {
 						new_mas[0] = mas[0];
 						new_mas[1] = mas[1];
 							
-						if (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 || new_mas[1].central_point(new_mas[2], new_mas[3]) == 0 || 
-                           (new_mas[2].central_point(new_mas[0], new_mas[1]) == 0 && new_mas[3].central_point(new_mas[0], new_mas[1]) == 0) ||
-                           (new_mas[0].central_point(new_mas[2], new_mas[3]) == 0 && new_mas[1].central_point(new_mas[2], new_mas[3]) == 0)) {
+						if (new_mas[0].central_point(new_mas[2], new_mas[3]) || new_mas[1].central_point(new_mas[2], new_mas[3]) || 
+                           (new_mas[2].central_point(new_mas[0], new_mas[1]) && new_mas[3].central_point(new_mas[0], new_mas[1])) ||
+                           (new_mas[0].central_point(new_mas[2], new_mas[3]) && new_mas[1].central_point(new_mas[2], new_mas[3]))) {
                            return true;
                         }
                         return false;
@@ -360,7 +352,7 @@ class Triangle {
                                 new_mas[2] = mas[2];
                             }
                             new_mas[0] = mas[0];
-                            if (new_mas[0].central_point(new_mas[1], new_mas[2]) == 0)
+                            if (new_mas[0].central_point(new_mas[1], new_mas[2]))
                             	return true;
                             return false;
 						}
