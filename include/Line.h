@@ -31,7 +31,6 @@ class Line {
         Point start_point() {
 			return point1;
         }
-
         bool is_lines_parallel(Line line_1) {
         	Line line_2(point1, point2);
 			double a1 = line_1.a(); double a2 = line_2.a();
@@ -70,5 +69,5 @@ class Line {
             return std::sqrt((std::pow((y_0-point.y)*c-(z_0-point.z)*b, 2) + 
             	   std::pow(c*(x_0-point.x)-a*(z_0-point.z), 2) + 
             	   std::pow((x_0-point.x)*b-a*(y_0-point.y), 2))/(a*a+b*b+c*c));
-     	}	
+     	}
 };

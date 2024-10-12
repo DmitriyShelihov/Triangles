@@ -24,7 +24,7 @@ class Plane {
           	point3.print();
           	std::cout << " }";
 		}
-		
+
 		double A() {
 			return point3.z * (point2.y-point1.y) + point1.z * (point3.y-point2.y) + point2.z * (point1.y-point3.y);
 		}
@@ -40,6 +40,13 @@ class Plane {
 		double D() {
 			return -(point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
                    point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x);
+		}
+		bool point_belongs(Point p) {
+			if (!p.valid())
+				return false;
+			Plane pl(point1, point2, point3);
+			double A = pl.A(); double B = pl.B(); double C = pl.C(); double D = pl.D();
+			return (compare_double(A*p.x + B*p.y + C*p.z + D, 0) == 0);
 		}
 
 		bool equal(Plane plane) {
@@ -109,7 +116,39 @@ class Plane {
 			
 			Line line (point_1, point_2);
 			return line;
-		}
-	
-		
+		}		
+        Point intersection_with_line(Line line) {
+			Point intersection {};
+			
+			
+			if (!point1.valid() || !point2.valid() || !point3.valid() || !line.valid())
+				return intersection;
+			double A = (*this).A(); double B = (*this).B(); double C = (*this).C(); double D = (*this).D();
+			
+			double a = line.a(); double b = line.b(); double c = line.c();
+			
+			Point point1 = line.start_point();
+			if ((*this).point_belongs(point1))
+				return point1;
+			double mod_vec_l = std::sqrt(a*a + b*b + c*c);
+			double mod_vec_p = std::sqrt(A*A + B*B + C*C);
+
+			double cos_alpha = (a*A+b*B+c*C)/(mod_vec_l*mod_vec_p);
+			if (compare_double(cos_alpha, 0) == 0)				//line and plane are parallel
+				return intersection;
+			double h = std::fabs(A*point1.x + B*point1.y + C*point1.z + D)/mod_vec_p;
+			double x = h/cos_alpha;
+			
+			intersection.x = (a*x)/mod_vec_l + point1.x;
+			intersection.y = (b*x)/mod_vec_l + point1.y;
+			intersection.z = (c*x)/mod_vec_l + point1.z;
+			
+			if ((*this).point_belongs(intersection))
+				return intersection;
+			intersection.x = (-a*x)/mod_vec_l + point1.x;
+			intersection.y = (-b*x)/mod_vec_l + point1.y;
+			intersection.z = (-c*x)/mod_vec_l + point1.z;
+			
+			return intersection;
+     	}        
 };

@@ -24,24 +24,31 @@ class Segment {
 			point2.print();
 			std::cout << " }";
 		}
-		bool point_belongs_segment(Point point) {
+		bool point_belongs(Point point) {
+			if (!point1.valid() || !point2.valid() || !point.valid())
+				return false;
 			return compare_double((point.x-point1.x) * (point2.y-point1.y), (point.y-point1.y) * (point2.x-point1.x)) == 0 &&
 				   compare_double((point.y-point1.y) * (point2.z-point1.z), (point.z-point1.z) * (point2.y-point1.y)) == 0 &&
 				   compare_double((point.x-point1.x) * (point2.z-point1.z), (point.z-point1.z) * (point2.x-point1.x)) == 0 &&
 				   point.central_point(point1, point2);
 		}
 		bool point_belongs_same_segment_line(Point point) {
+			if (!point1.valid() || !point2.valid() || !point.valid())
+				return false;
 			return compare_double((point.x-point1.x) * (point2.y-point1.y), (point.y-point1.y) * (point2.x-point1.x)) == 0 &&
                    compare_double((point.y-point1.y) * (point2.z-point1.z), (point.z-point1.z) * (point2.y-point1.y)) == 0 &&
                    compare_double((point.x-point1.x) * (point2.z-point1.z), (point.z-point1.z) * (point2.x-point1.x)) == 0;
 		}
 		Point intersection_with_line_on_plane (Line line) {							//Line and segment are considered to be on the same plane
+			Point intersection {};
+			if (!line.valid() || !point1.valid() || !point2.valid())
+				return intersection;
+
 			double a = line.a();
 			double b = line.b();
 			double c = line.c();
 			
 			Point point0 = line.start_point();
-			Point intersection {};
 
 			double h = line.point_distance_to_line(point1);
 			
@@ -65,25 +72,31 @@ class Segment {
 			intersection.y = point1.y + (point2.y-point1.y)*r/l;
 			intersection.z = point1.z + (point2.z-point1.z)*r/l;
 			
-			if (line.point_belongs_line(intersection) && segment.point_belongs_segment(intersection))
+			if (line.point_belongs_line(intersection) && segment.point_belongs(intersection))
 				return intersection;
-			else {
-				Point default_p {};
-				return default_p;			//segment does not cross the line
-			}	
+			intersection.x = point1.x - (point2.x-point1.x)*r/l;
+            intersection.y = point1.y - (point2.y-point1.y)*r/l;
+            intersection.z = point1.z - (point2.z-point1.z)*r/l;
+			
+			if (line.point_belongs_line(intersection) && segment.point_belongs(intersection))
+				return intersection;
+
+			Point default_p {};
+			return default_p;			//segment does not cross the line	
 		}
 		Point intersection_with_segment_on_plane(Segment seg2) {		//segments are considered to be on the same plane
 			Point answer {};
-			if (!seg2.valid())
+			Segment seg1(point1, point2);
+			if (!seg2.valid() || !seg1.valid())
 				return answer;
 
 			Line line(point1, point2);
-			Segment seg1(point1, point2);
+			
 			Point point_intersect = seg2.intersection_with_line_on_plane(line);
 
 			if (!point_intersect.valid())
 				return answer;
-			if (seg2.point_belongs_segment(point_intersect))
+			if (seg1.point_belongs(point_intersect))
 				return point_intersect;
 			return answer;
 		}
@@ -93,4 +106,18 @@ class Segment {
 			return (line.point_belongs_line(point1) && line.point_belongs_line(point2));
 		}
 };
+
+Segment get_largest_segment(Point p1, Point p2, Point p3) {
+	if (p1.central_point(p2, p3)) {
+		Segment seg(p2, p3);
+		return seg;
+	}
+	if (p2.central_point(p1, p3)) {
+		Segment seg(p1, p3);
+		return seg;
+	}
+	Segment seg(p1, p2);
+	return seg;
+	
+}
 

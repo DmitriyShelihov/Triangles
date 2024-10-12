@@ -2,12 +2,12 @@
 #include <iostream>
 #include <cmath>
 
-const long double DBL_EPSILON = 1e-10;
+const long double eps = 1e-10;
 
 int compare_double(const double a, const double b) {
-	if (std::fabs(a-b) < DBL_EPSILON)
+	if (std::fabs(a-b) < eps)
 		return 0;
-	if (a-b > DBL_EPSILON)
+	if (a-b > eps)
 		return 1;
 	return 2;
 }
@@ -50,7 +50,7 @@ class Triangle {
 			point3.print();
 			std::cout << " }";
 		}
-		bool degenerate_triangle() {
+		bool degen() {
 			Segment side (point1, point2);
 			return side.point_belongs_same_segment_line(point3); 
 		}
@@ -66,6 +66,9 @@ class Triangle {
 		}
 		Triangle_vert get_triangle_vert() {
 			return {point1, point2, point3};
+		}
+		bool is_point() {					//is Triangle a point
+			return (point1.equal(point2) && point1.equal(point3));
 		}
 		bool point_inside(Point point) {			//point and triangle on the same plane
 			Line line1(point1, point);
@@ -87,7 +90,80 @@ class Triangle {
 			}
 			return false;
 		}
+		bool point_belongs(Point p) {
+			Triangle T(point1, point2, point3);
+			Triangle_sides sides = T.get_triangle_sides();
+			Plane pl = T.plane();
+			if (!pl.point_belongs(p))
+				return false;
+			return (sides.seg1.point_belongs(p) || sides.seg2.point_belongs(p) || sides.seg3.point_belongs(p) || T.point_inside(p));
+		}
+
 		bool triangle_intersection(Triangle second) {
+			Triangle first(point1, point2, point3);
+			if (!second.degen() && first.degen()) {
+				Plane plane = second.plane();
+				if (first.is_point()) {
+					return second.point_belongs(point1);
+				}
+				if (point1.central_point(point2, point3)) {
+					Segment seg(point2, point3);
+					Line line(point2, point3);
+					Point intersection = plane.intersection_with_line(line);
+					return seg.point_belongs(intersection);
+				}
+				if (point2.central_point(point1, point3)) {
+                	Segment seg(point1, point3);
+                    Line line(point1, point3);
+                    Point intersection = plane.intersection_with_line(line);
+                    return seg.point_belongs(intersection);
+				}
+                Segment seg(point1, point2);
+                Line line(point1, point2);
+                Point intersection = plane.intersection_with_line(line);
+                return seg.point_belongs(intersection); 
+			} else if (second.degen() && !first.degen()) {
+				Triangle_vert vert = second.get_triangle_vert();
+				Point point4 = vert.p1; Point point5 = vert.p2; Point point6 = vert.p3;
+
+				Plane plane = first.plane();
+                if (second.is_point()) {
+                	return first.point_belongs(point4);
+                }
+                if (point4.central_point(point5, point6)) {
+                    Segment seg(point5, point6);
+                    Line line(point5, point6);
+                    Point intersection = plane.intersection_with_line(line);
+                    return seg.point_belongs(intersection);
+                }
+                if (point5.central_point(point4, point6)) {
+                    Segment seg(point4, point6);
+                    Line line(point4, point6);
+                    Point intersection = plane.intersection_with_line(line);
+                    return seg.point_belongs(intersection);
+                }
+                Segment seg(point4, point5);
+                Line line(point4, point5);
+                Point intersection = plane.intersection_with_line(line);
+                return seg.point_belongs(intersection);
+			} else if (second.degen() && first.degen()) {
+				Triangle_vert vert = second.get_triangle_vert();
+				Point point4 = vert.p1; Point point5 = vert.p2; Point point6 = vert.p3;
+				
+				if (!first.is_point() && !second.is_point()) {	
+					Segment seg1 = get_largest_segment(point1, point2, point3);
+					Segment seg2 = get_largest_segment(point4, point5, point6);
+					if (!point1.equal(point2))
+						Line line(point1, point2);
+					else if (!point1.equal(point3))
+						Line line(point1, point3);
+					else if (!point2.equal(point3))
+						Line line(point2, point3);
+					//TODO
+				}
+				//TODO
+			}
+			
 			Plane plane1(point1, point2, point3);
 			Plane plane2 = second.plane();
 			Line line = plane1.plane_intersection(plane2);
