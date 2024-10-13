@@ -15,7 +15,7 @@ class Segment {
 		}
 		
 		bool valid() {
-			return point1.valid() && point2.valid();
+			return point1.valid() && point2.valid() && !point1.equal(point2);
 		}
 		void print() {
 			std::cout << "Segment { ";
@@ -61,7 +61,7 @@ class Segment {
 			double cos_alpha = ((point2.x-point1.x)*a + (point2.y-point1.y)*b + (point2.z-point1.z)*c)/(l*A);
 
 			if (compare_double(cos_alpha, 1) == 0 || compare_double(cos_alpha, -1) == 0) {		//segment and line are parallel
-				if (line.point_belongs_line(point1))
+				if (line.point_belongs(point1))
 					return point1;								//segment belongs to line
 				else
 					return intersection;						//segment and line are parallel and there is no intersection
@@ -72,13 +72,13 @@ class Segment {
 			intersection.y = point1.y + (point2.y-point1.y)*r/l;
 			intersection.z = point1.z + (point2.z-point1.z)*r/l;
 			
-			if (line.point_belongs_line(intersection) && segment.point_belongs(intersection))
+			if (line.point_belongs(intersection) && segment.point_belongs(intersection))
 				return intersection;
 			intersection.x = point1.x - (point2.x-point1.x)*r/l;
             intersection.y = point1.y - (point2.y-point1.y)*r/l;
             intersection.z = point1.z - (point2.z-point1.z)*r/l;
 			
-			if (line.point_belongs_line(intersection) && segment.point_belongs(intersection))
+			if (line.point_belongs(intersection) && segment.point_belongs(intersection))
 				return intersection;
 
 			Point default_p {};
@@ -103,7 +103,17 @@ class Segment {
 		bool belongs_to_line(Line line) {
 			if (!line.valid() || !point1.valid() || !point2.valid())
 				return false;
-			return (line.point_belongs_line(point1) && line.point_belongs_line(point2));
+			return (line.point_belongs(point1) && line.point_belongs(point2));
+		}
+		bool belongs_one_plane(Line line) {
+			Segment seg(point1, point2);
+			if (!line.valid() || !seg.valid())
+				return false;
+			Plane p (line, point1);
+			if (p.valid()) {
+				return p.point_belongs(point2);
+			}			//=> point1 belongs line
+			return true;
 		}
 };
 

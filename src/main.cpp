@@ -1,4 +1,5 @@
 #include "Triangles.h" 
+#include <set>
 
 int main() {
 	
@@ -23,19 +24,19 @@ int main() {
 		mas[i] = T;
 	}
 
-	int mas1[100];
-	int p = 0;
+	std::set<int> ans;
+
 	for (int i = 0; i < N-1; i++) {
-		for (int j = i + 1; j < N; j++) {
+		for (int j = i+1; j < N; j++) {
 			if (mas[i].triangle_intersection(mas[j])) {
-				mas1[p] = i;
-				p++;
-				std::cout << "ANSWER:{{{{{{{{{{{{{{{{{"  << i << " with " << j << "}}}}}}}}}}}}}}}}}" << "\n";				
+				ans.insert(i);
+				ans.insert(j);
 			}
 		}
 	}
-	printf("\n%d\n", p);
-	for (int i = 0; i < p; i++)
-		printf("%d ", mas1[i]);
+	
+	for (auto i: ans)
+		std::cout << i << "\n";
+
 	return 0;
 }

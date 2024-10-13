@@ -19,7 +19,7 @@ class Line {
 			point2.print();
 			std::cout << " }";
 		}
-		bool point_belongs_line(Point point) {
+		bool point_belongs(Point point) {
         	return compare_double((point.x-point1.x) * (point2.y-point1.y), (point.y-point1.y) * (point2.x-point1.x)) == 0 &&
                    compare_double((point.y-point1.y) * (point2.z-point1.z), (point.z-point1.z) * (point2.y-point1.y)) == 0 &&
                    compare_double((point.x-point1.x) * (point2.z-point1.z), (point.z-point1.z) * (point2.x-point1.x)) == 0;

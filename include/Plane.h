@@ -11,9 +11,16 @@ class Plane {
 	public:
 		Plane (Point _point1, Point _point2, Point _point3)
 			: point1(_point1), point2(_point2), point3(_point3) {}
+		Plane (Line line, Point point) {
+			point1 = point1;
+			point2 = line.start_point();
+			point3.x = point2.x + line.a();
+			point3.y = point2.y + line.b();
+			point3.z = point2.z + line.c();
+		}
 		bool valid() {
 			Line line (point1, point2);
-			return point1.valid() && point2.valid() && point3.valid() && line.point_belongs_line(point3);
+			return point1.valid() && point2.valid() && point3.valid() && line.point_belongs(point3);
 		}
 		void print() {
          	std::cout << "Plane { ";

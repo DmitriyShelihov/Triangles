@@ -151,29 +151,37 @@ class Triangle {
 				Point point4 = vert.p1; Point point5 = vert.p2; Point point6 = vert.p3;
 				
 				if (!first.is_point() && !second.is_point()) {	
-					Segment seg1 = get_largest_segment(point1, point2, point3);
+					Segment seg1 = get_largest_segment(point1, point2, point3); 		//we have normal segment
 					Segment seg2 = get_largest_segment(point4, point5, point6);
-					if (!point1.equal(point2))
-						Line line(point1, point2);
-					else if (!point1.equal(point3))
-						Line line(point1, point3);
-					else if (!point2.equal(point3))
-						Line line(point2, point3);
-					//TODO
-				}
-				//TODO
+					Line line (point1, point2);
+					if (!line.valid()) {
+						Line line1(point2, point3); 
+						line = line1;
+					}
+					if (!line.valid()) {
+						Line line2(point1, point3);
+						line = line2;
+					}	
+					//we have valid Line
+					if (seg1.belongs_one_plane(line)) {
+						return seg1.intersection_with_segment_on_plane(seg2).valid();
+					}
+					// => segment and line don`t intersect 
+					return false;										
+				} else if (first.is_point() && !second.is_point()) {
+					Segment seg = get_largest_segment(point4, point5, point6);
+					return seg.point_belongs(point1);
+				} else if (!first.is_point() && second.is_point()) {
+					Segment seg = get_largest_segment(point1, point2, point3);
+					return seg.point_belongs(point4);
+				} 
+				return point1.equal(point4);
 			}
 			
 			Plane plane1(point1, point2, point3);
 			Plane plane2 = second.plane();
 			Line line = plane1.plane_intersection(plane2);
 			
-			//debug
-			printf("The line of intersection two triangle planes:");
-			line.print();
-			printf("\n");
-			//debug_end
-
 			Segment segment1(point1, point2);
 			Segment segment2(point2, point3);
             Segment segment3(point1, point3);
@@ -217,21 +225,21 @@ class Triangle {
 			int k = 0;
 			Point mas[6];
 			
-			if (line.point_belongs_line(point1) && !line.point_belongs_line(point2) && !line.point_belongs_line(point3)) {
+			if (line.point_belongs(point1) && !line.point_belongs(point2) && !line.point_belongs(point3)) {
  				k++;
  				mas[0] = point1;
  				if (inter2.valid()){
 					k++;
 					mas[1] = inter2;
  				}
-            } else if (line.point_belongs_line(point2) && !line.point_belongs_line(point1) && !line.point_belongs_line(point3)) {
+            } else if (line.point_belongs(point2) && !line.point_belongs(point1) && !line.point_belongs(point3)) {
 				k++;
 				mas[0] = point2;
 				if (inter3.valid()) {
 					k++;
 					mas[1] = inter3;
 				}
-            } else if (line.point_belongs_line(point3) && !line.point_belongs_line(point1) && !line.point_belongs_line(point2)) {
+            } else if (line.point_belongs(point3) && !line.point_belongs(point1) && !line.point_belongs(point2)) {
 				k++;
 				mas[0] = point3;
 				if (inter1.valid()) {
@@ -244,21 +252,21 @@ class Triangle {
              	if (inter3.valid()){mas[k] = inter3; k++;}
 			}
 			
-			if (line.point_belongs_line(point4) && !line.point_belongs_line(point5) && !line.point_belongs_line(point6)) {
+			if (line.point_belongs(point4) && !line.point_belongs(point5) && !line.point_belongs(point6)) {
                  mas[k] = point4;
                  k++;
                  if (inter5.valid()){
                      mas[k] = inter5;
                      k++;
                  }
-             } else if (line.point_belongs_line(point5) && !line.point_belongs_line(point4) && !line.point_belongs_line(point6)) {
+             } else if (line.point_belongs(point5) && !line.point_belongs(point4) && !line.point_belongs(point6)) {
                  mas[k] = point5;
                  k++;
                  if (inter6.valid()) {
                      mas[k] = inter6;
                      k++;
                  }
-             } else if (line.point_belongs_line(point6) && !line.point_belongs_line(point4) && !line.point_belongs_line(point5)) {
+             } else if (line.point_belongs(point6) && !line.point_belongs(point4) && !line.point_belongs(point5)) {
                  mas[k] = point6;
                  k++;
                  if (inter4.valid()) {
@@ -271,22 +279,11 @@ class Triangle {
                  if (inter6.valid()){mas[k] = inter6; k++;}
              }
 			
-			//debug
-			printf("k = %d\nPoints are:", k);
-			for (int i = 0; i < k; i++)
-				mas[i].print();
-			printf("\n");
-			//debug end
-
 			if (!segment1.belongs_to_line(line) && !segment2.belongs_to_line(line) && !segment3.belongs_to_line(line) &&
                 !sides.seg1.belongs_to_line(line) && !sides.seg2.belongs_to_line(line) && !sides.seg3.belongs_to_line(line)) {
 				if (k == 4) {
 					if (!mas[0].equal(mas[1]) && !mas[0].equal(mas[2]) && !mas[0].equal(mas[3])				 
 				 	&& !mas[1].equal(mas[2]) && !mas[1].equal(mas[3]) && !mas[2].equal(mas[3])) {		//4 different points of intersection
-						//debug
-
-						printf("Segment doesnt belong line, k = 4, point are not equal\n");
-						//debug end
 						if ((mas[0].central_point(mas[2], mas[3]) && mas[1].central_point(mas[2], mas[3])) ||
 					    	(mas[2].central_point(mas[0], mas[1]) && mas[3].central_point(mas[0], mas[1])) ||
 					    	(mas[0].central_point(mas[2], mas[3]) && mas[3].central_point(mas[0], mas[1])) ||
