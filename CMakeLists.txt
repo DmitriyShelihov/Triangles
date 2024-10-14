@@ -20,6 +20,18 @@ add_executable(
   src/main.cpp
 )
 
+add_executable(
+  UNIT_TESTS
+  src/unit_tests.cpp
+)
+
 target_include_directories(MAIN PUBLIC include/)
+target_include_directories(UNIT_TESTS PUBLIC include/)
+
+target_link_libraries(
+	UNIT_TESTS
+	GTest::gtest_main
+)
 
 include(GoogleTest)
+gtest_discover_tests(UNIT_TESTS)

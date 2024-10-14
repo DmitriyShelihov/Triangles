@@ -20,6 +20,8 @@ class Line {
 			std::cout << " }";
 		}
 		bool point_belongs(Point point) {
+			if (!point.valid() || !point1.valid() || !point2.valid())
+				return false;
         	return compare_double((point.x-point1.x) * (point2.y-point1.y), (point.y-point1.y) * (point2.x-point1.x)) == 0 &&
                    compare_double((point.y-point1.y) * (point2.z-point1.z), (point.z-point1.z) * (point2.y-point1.y)) == 0 &&
                    compare_double((point.x-point1.x) * (point2.z-point1.z), (point.z-point1.z) * (point2.x-point1.x)) == 0;
@@ -32,7 +34,10 @@ class Line {
 			return point1;
         }
         bool is_lines_parallel(Line line_1) {
-        	Line line_2(point1, point2);
+			Line line_2(point1, point2);
+			if (!line_1.valid() || !line_2.valid())
+				return false;
+
 			double a1 = line_1.a(); double a2 = line_2.a();
 			double b1 = line_1.b(); double b2 = line_2.b();
 			double c1 = line_1.c(); double c2 = line_2.c();
