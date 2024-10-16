@@ -20,7 +20,7 @@ class Plane {
 		}
 		bool valid() {
 			Line line (point1, point2);
-			return point1.valid() && point2.valid() && point3.valid() && line.point_belongs(point3);
+			return point1.valid() && point2.valid() && point3.valid() && !line.point_belongs(point3);
 		}
 		void print() {
          	std::cout << "Plane { ";
@@ -33,23 +33,31 @@ class Plane {
 		}
 
 		double A() {
+			if (!point1.valid() || !point2.valid() || !point3.valid())
+				return false;
 			return point3.z * (point2.y-point1.y) + point1.z * (point3.y-point2.y) + point2.z * (point1.y-point3.y);
 		}
 
 		double B() {
+			if (!point1.valid() || !point2.valid() || !point3.valid())
+             	return false;
 			return point3.z * (point1.x-point2.x) + point1.z * (point2.x-point3.x) + point2.z * (point3.x-point1.x);
 		}
 
 		double C() {
+			if (!point1.valid() || !point2.valid() || !point3.valid())
+               	return false;
 			return point3.y * (point2.x-point1.x) + point1.y * (point3.x-point2.x) + point2.y * (point1.x-point3.x);
 		}
 		
 		double D() {
+			if (!point1.valid() || !point2.valid() || !point3.valid())
+               	return false;
 			return -(point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
                    point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x);
 		}
 		bool point_belongs(Point p) {
-			if (!p.valid())
+			if (!p.valid() || !point1.valid() || !point2.valid() || !point3.valid())
 				return false;
 			Plane pl(point1, point2, point3);
 			double A = pl.A(); double B = pl.B(); double C = pl.C(); double D = pl.D();
@@ -57,6 +65,8 @@ class Plane {
 		}
 
 		bool equal(Plane plane) {
+			if (!plane.valid() || !point1.valid() || !point2.valid() || !point3.valid())
+				return false;
 			double A = plane.A(), B = plane.B(), C = plane.C(), D = plane.D();
 			return (compare_double(A*point1.x + B*point1.y + C*point1.z + D, 0) == 0 &&
 				    compare_double(A*point2.x + B*point2.y + C*point2.z + D, 0) == 0 &&
@@ -126,7 +136,6 @@ class Plane {
 		}		
         Point intersection_with_line(Line line) {
 			Point intersection {};
-			
 			
 			if (!point1.valid() || !point2.valid() || !point3.valid() || !line.valid())
 				return intersection;
