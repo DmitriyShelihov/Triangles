@@ -25,8 +25,19 @@ add_executable(
   src/unit_tests.cpp
 )
 
+add_executable(
+	E2E_GEN
+	src/test_gen.cpp
+)
+
+add_executable(
+	E2E_GET_ANS
+	src/e2e_tests.cpp
+)
+
 target_include_directories(MAIN PUBLIC include/)
 target_include_directories(UNIT_TESTS PUBLIC include/)
+target_include_directories(E2E_GET_ANS PUBLIC include/)
 
 target_link_libraries(
 	UNIT_TESTS
