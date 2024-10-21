@@ -102,6 +102,7 @@ class Triangle {
 		bool triangle_intersection(Triangle second) {
 			Triangle first(point1, point2, point3);
 			if (!second.degen() && first.degen()) {
+				
 				Plane plane = second.plane();
 				if (first.is_point()) {
 					return second.point_belongs(point1);
@@ -110,18 +111,18 @@ class Triangle {
 					Segment seg(point2, point3);
 					Line line(point2, point3);
 					Point intersection = plane.intersection_with_line(line);
-					return seg.point_belongs(intersection);
+					return (seg.point_belongs(intersection) && second.point_belongs(intersection));
 				}
 				if (point2.central_point(point1, point3)) {
                 	Segment seg(point1, point3);
                     Line line(point1, point3);
                     Point intersection = plane.intersection_with_line(line);
-                    return seg.point_belongs(intersection);
+                    return (seg.point_belongs(intersection) && second.point_belongs(intersection));
 				}
                 Segment seg(point1, point2);
                 Line line(point1, point2);
                 Point intersection = plane.intersection_with_line(line);
-                return seg.point_belongs(intersection); 
+                return (seg.point_belongs(intersection) && second.point_belongs(intersection) ); 
 			} else if (second.degen() && !first.degen()) {
 				Triangle_vert vert = second.get_triangle_vert();
 				Point point4 = vert.p1; Point point5 = vert.p2; Point point6 = vert.p3;
@@ -134,18 +135,18 @@ class Triangle {
                     Segment seg(point5, point6);
                     Line line(point5, point6);
                     Point intersection = plane.intersection_with_line(line);
-                    return seg.point_belongs(intersection);
+                    return seg.point_belongs(intersection) && first.point_belongs(intersection);
                 }
                 if (point5.central_point(point4, point6)) {
                     Segment seg(point4, point6);
                     Line line(point4, point6);
                     Point intersection = plane.intersection_with_line(line);
-                    return seg.point_belongs(intersection);
+                    return seg.point_belongs(intersection) && first.point_belongs(intersection);
                 }
                 Segment seg(point4, point5);
                 Line line(point4, point5);
                 Point intersection = plane.intersection_with_line(line);
-                return seg.point_belongs(intersection);
+                return seg.point_belongs(intersection) && first.point_belongs(intersection);
 			} else if (second.degen() && first.degen()) {
 				Triangle_vert vert = second.get_triangle_vert();
 				Point point4 = vert.p1; Point point5 = vert.p2; Point point6 = vert.p3;
