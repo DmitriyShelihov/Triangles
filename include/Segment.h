@@ -51,7 +51,7 @@ class Segment {
 			Point point0 = line.start_point();
 
 			double h = line.point_distance_to_line(point1);
-			
+
 			Segment segment(point1, point2);
 
 			double l = segment.length();
@@ -71,7 +71,6 @@ class Segment {
 			intersection.x = point1.x + (point2.x-point1.x)*r/l;
 			intersection.y = point1.y + (point2.y-point1.y)*r/l;
 			intersection.z = point1.z + (point2.z-point1.z)*r/l;
-			
 			if (line.point_belongs(intersection) && segment.point_belongs(intersection))
 				return intersection;
 			intersection.x = point1.x - (point2.x-point1.x)*r/l;

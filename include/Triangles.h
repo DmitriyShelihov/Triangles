@@ -101,8 +101,7 @@ class Triangle {
 
 		bool triangle_intersection(Triangle second) {
 			Triangle first(point1, point2, point3);
-			if (!second.degen() && first.degen()) {
-				
+			if (!second.degen() && first.degen()) {	
 				Plane plane = second.plane();
 				if (first.is_point()) {
 					return second.point_belongs(point1);
@@ -178,7 +177,7 @@ class Triangle {
 				} 
 				return point1.equal(point4);
 			}
-			
+
 			Plane plane1(point1, point2, point3);
 			Plane plane2 = second.plane();
 			Line line = plane1.plane_intersection(plane2);
@@ -222,7 +221,6 @@ class Triangle {
 			Point inter4 = sides.seg1.intersection_with_line_on_plane(line);
 			Point inter5 = sides.seg2.intersection_with_line_on_plane(line);
 			Point inter6 = sides.seg3.intersection_with_line_on_plane(line);
-			
 			int k = 0;
 			Point mas[6];
 			
@@ -278,7 +276,7 @@ class Triangle {
                  if (inter4.valid()){mas[k] = inter4; k++;}
                  if (inter5.valid()){mas[k] = inter5; k++;}
                  if (inter6.valid()){mas[k] = inter6; k++;}
-             }
+            }
 			
 			if (!segment1.belongs_to_line(line) && !segment2.belongs_to_line(line) && !segment3.belongs_to_line(line) &&
                 !sides.seg1.belongs_to_line(line) && !sides.seg2.belongs_to_line(line) && !sides.seg3.belongs_to_line(line)) {

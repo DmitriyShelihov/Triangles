@@ -21,10 +21,11 @@ class Line {
 		}
 		bool point_belongs(Point point) {
 			if (!point.valid() || !point1.valid() || !point2.valid())
-				return false;
-        	return compare_double((point.x-point1.x) * (point2.y-point1.y), (point.y-point1.y) * (point2.x-point1.x)) == 0 &&
-                   compare_double((point.y-point1.y) * (point2.z-point1.z), (point.z-point1.z) * (point2.y-point1.y)) == 0 &&
-                   compare_double((point.x-point1.x) * (point2.z-point1.z), (point.z-point1.z) * (point2.x-point1.x)) == 0;
+				return false; 
+
+        	return compare_double(std::pow((point.x-point1.x) * (point2.y-point1.y)-(point.y-point1.y) * (point2.x-point1.x), 2) + 
+                   std::pow((point.y-point1.y) * (point2.z-point1.z)-(point.z-point1.z) * (point2.y-point1.y), 2) +
+                   std::pow((point.x-point1.x) * (point2.z-point1.z)-(point.z-point1.z) * (point2.x-point1.x), 2), 0) == 0;
         }
         double a() {return point2.x-point1.x;}
         double b() {return point2.y-point1.y;}
