@@ -382,7 +382,6 @@ class PlaneIntersectionTest : public ::testing::Test {
         Line l_ans = plane1.plane_intersection(plane2);
         p1_ans = l_ans.start_point();
         p2_ans = l_ans.second_point();
-     	printf("%0.9lf, %0.9lf, %0.9lf, %0.9lf, %0.9lf, %0.9lf\n", p2_ans.x, p2_ans.y, p2_ans.z, p2_ref.x, p2_ref.y, p2_ref.z);
   }		
 };
  
