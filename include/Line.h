@@ -7,7 +7,7 @@ class Line {
 		Point point1;
 		Point point2;
 	public:
-		Line (Point _point1, Point _point2) 
+		Line (Point& _point1, Point& _point2) 
 			: point1(_point1), point2(_point2) {}
 		bool valid() {
 			return point1.valid() && point2.valid() && !point1.equal(point2);
@@ -19,13 +19,17 @@ class Line {
 			point2.print();
 			std::cout << " }";
 		}
-		bool point_belongs(Point point) {
+		bool point_belongs(Point& point) {
 			if (!point.valid() || !point1.valid() || !point2.valid())
 				return false; 
-
-        	return compare_double(std::pow((point.x-point1.x) * (point2.y-point1.y)-(point.y-point1.y) * (point2.x-point1.x), 2) + 
+        	/*return compare_double(std::pow((point.x-point1.x) * (point2.y-point1.y)-(point.y-point1.y) * (point2.x-point1.x), 2) + 
                    std::pow((point.y-point1.y) * (point2.z-point1.z)-(point.z-point1.z) * (point2.y-point1.y), 2) +
                    std::pow((point.x-point1.x) * (point2.z-point1.z)-(point.z-point1.z) * (point2.x-point1.x), 2), 0) == 0;
+        	*/
+        	return compare_double((point.x-point1.x) * (point2.y-point1.y)-(point.y-point1.y) * (point2.x-point1.x), 0) == 0 && 
+        		   compare_double((point.y-point1.y) * (point2.z-point1.z)-(point.z-point1.z) * (point2.y-point1.y), 0) == 0 &&
+        		   compare_double((point.x-point1.x) * (point2.z-point1.z)-(point.z-point1.z) * (point2.x-point1.x), 0) == 0;
+        	
         }
         double a() {return point2.x-point1.x;}
         double b() {return point2.y-point1.y;}
@@ -34,7 +38,10 @@ class Line {
         Point start_point() {
 			return point1;
         }
-        bool is_lines_parallel(Line line_1) {
+        Point second_point() {
+			return point2;
+        }
+        bool is_lines_parallel(Line& line_1) {
 			Line line_2(point1, point2);
 			if (!line_1.valid() || !line_2.valid())
 				return false;

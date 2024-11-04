@@ -15,8 +15,7 @@ class Point {
 			return !(std::isnan(x) || std::isnan(y) || std::isnan(z));
 		}
 		bool equal(Point rhs) {
-			Point p(x, y, z);
-			if (!rhs.valid() || !rhs.valid())
+			if (!rhs.valid() || !(this->valid()))
 				return false;
 			return (compare_double(x, rhs.x) == 0 && compare_double(y, rhs.y) == 0 && compare_double(z, rhs.z) == 0);
 		}

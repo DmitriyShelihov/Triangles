@@ -104,9 +104,13 @@ class LinePoint_belongsTest: public ::testing::Test {
 	public:
 		bool ref_ans1 = 1;
 		bool ref_ans2 = 0;
+		bool ref_ans3 = 1;
+		bool ref_ans4 = 0;
 	protected:
 		bool ans1;
 		bool ans2; 
+		bool ans3;
+		bool ans4;
 	void SetUp() {
 		Point p1(1, 1, 1);
 		Point p2(2, 2, 2);
@@ -114,15 +118,21 @@ class LinePoint_belongsTest: public ::testing::Test {
 		
 		Point p3(3, 3, 3);
 		Point p4(-1, 1, 1);
+		Point p5(1.000001, 1.000001, 1.000001);
+		Point p6(999999999, 999999999, 999999999.0001);
 		
 		ans1 = line.point_belongs(p3);
 		ans2 = line.point_belongs(p4);
+		ans3 = line.point_belongs(p5);
+		ans4 = line.point_belongs(p6);
 	}
 };
 
 TEST_F(LinePoint_belongsTest, test5) {
 	ASSERT_EQ(ans1, ref_ans1);
 	ASSERT_EQ(ans2, ref_ans2);
+	ASSERT_EQ(ans3, ref_ans3);
+	ASSERT_EQ(ans4, ref_ans4);
 }
 
 class Line_A_B_C_Test: public ::testing::Test {
@@ -354,7 +364,7 @@ TEST_F(PlaneEqualTest, test13) {
 class PlaneIntersectionTest : public ::testing::Test {
     public:
         Point p1_ref = {0, 0, 0};
-        Point p2_ref = {3, 3, 0};
+        Point p2_ref = {0.707106781, 0.707106781, 0};
     protected:
     	Point p1_ans;
     	Point p2_ans;
@@ -369,11 +379,11 @@ class PlaneIntersectionTest : public ::testing::Test {
         Plane plane1(p1, p2, p3);
         Plane plane2(p4, p5, p6);
 
-        Line line_ans = plane1.plane_intersection(plane2);
-        
-        p1_ans = line_ans.start_point();
-        p2_ans = {p1_ans.x + line_ans.a(), p1_ans.y + line_ans.b(), p1_ans.z + line_ans.c()};
-    }
+        Line l_ans = plane1.plane_intersection(plane2);
+        p1_ans = l_ans.start_point();
+        p2_ans = l_ans.second_point();
+     	printf("%0.9lf, %0.9lf, %0.9lf, %0.9lf, %0.9lf, %0.9lf\n", p2_ans.x, p2_ans.y, p2_ans.z, p2_ref.x, p2_ref.y, p2_ref.z);
+  }		
 };
  
 TEST_F(PlaneIntersectionTest, test14) {

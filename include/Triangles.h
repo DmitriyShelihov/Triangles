@@ -2,10 +2,10 @@
 #include <iostream>
 #include <cmath>
 
-const long double eps = 1e-10;
+const long double eps = 1e-8;
 
-int compare_double(const double a, const double b) {
-	if (std::fabs(a-b) < eps)
+inline int compare_double(const double a, const double b) {
+	if (std::fabs(a-b) <= eps)
 		return 0;
 	if (a-b > eps)
 		return 1;
@@ -36,7 +36,7 @@ class Triangle {
 		Point point3;
 	public:
 		Triangle () {}
-		Triangle (Point _point1, Point _point2, Point _point3) 
+		Triangle (Point& _point1, Point& _point2, Point& _point3) 
 			: point1(_point1), point2(_point2), point3(_point3) {}
 		bool valid() {
 			return point1.valid() && point2.valid() && point3.valid() && !point1.equal(point2) && !point1.equal(point3) && !point3.equal(point2);
@@ -70,7 +70,7 @@ class Triangle {
 		bool is_point() {					//is Triangle a point
 			return (point1.equal(point2) && point1.equal(point3));
 		}
-		bool point_inside(Point point) {			//point and triangle on the same plane
+		bool point_inside(Point& point) {			//point and triangle on the same plane
 			Line line1(point1, point);
 			Line line2(point2, point);
 			Line line3(point3, point);
@@ -90,7 +90,7 @@ class Triangle {
 			}
 			return false;
 		}
-		bool point_belongs(Point p) {
+		bool point_belongs(Point& p) {
 			Triangle T(point1, point2, point3);
 			Triangle_sides sides = T.get_triangle_sides();
 			Plane pl = T.plane();
@@ -99,7 +99,7 @@ class Triangle {
 			return (sides.seg1.point_belongs(p) || sides.seg2.point_belongs(p) || sides.seg3.point_belongs(p) || T.point_inside(p));
 		}
 
-		bool triangle_intersection(Triangle second) {
+		bool triangle_intersection(Triangle& second) {
 			Triangle first(point1, point2, point3);
 			if (!second.degen() && first.degen()) {	
 				Plane plane = second.plane();

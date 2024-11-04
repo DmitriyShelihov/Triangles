@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-int ntriangles = 2000;
+int ntriangles = 500;
 
 int main(int argc, char** argv) {
 	if (argc <= 1)
@@ -17,16 +17,16 @@ int main(int argc, char** argv) {
 			return 0;
 		}
 	}
-
 	for (int i = 0; i < ntests; i++) {
 		std::ofstream out("Tests/test" + std::to_string(i) + ".txt");
-		
+		double stepx = 0; double stepy = 0; double stepz = 0;
 		out << ntriangles << "\n";
-		for (int j = 0; j < ntriangles; j++) 
-			out << rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << " " <<
-			rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << " " << 
-			rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << " " << rand()%100 + rand()/10000000000.0 << "\n";
-		
+		for (int j = 0; j < ntriangles; j++) { 
+			stepx += 10; stepy += 10; stepz += 10;
+			out << stepx + rand()%100 + rand()/10000000000.0 << " " << stepy + rand()%100 + rand()/10000000000.0 << " " << stepz + rand()%100 + rand()/10000000000.0 << " " <<
+			stepx + rand()%100 + rand()/10000000000.0 << " " << stepy + rand()%100 + rand()/10000000000.0 << " " << stepz + rand()%100 + rand()/10000000000.0 << " " << 
+			stepx + rand()%100 + rand()/10000000000.0 << " " << stepy + rand()%100 + rand()/10000000000.0 << " " << stepz + rand()%100 + rand()/10000000000.0 << "\n";
+		}
 		out.close();
 	}	
 	return 0;

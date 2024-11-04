@@ -9,9 +9,9 @@ class Plane {
 		Point point2;
 		Point point3;
 	public:
-		Plane (Point _point1, Point _point2, Point _point3)
+		Plane (Point& _point1, Point& _point2, Point& _point3)
 			: point1(_point1), point2(_point2), point3(_point3) {}
-		Plane (Line line, Point point) {
+		Plane (Line& line, Point& point) {
 			point1 = point1;
 			point2 = line.start_point();
 			point3.x = point2.x + line.a();
@@ -56,7 +56,7 @@ class Plane {
 			return -(point1.x * point2.y * point3.z + point1.y * point3.x * point2.z + point2.x * point3.y * point1.z -
                    point1.y * point2.x * point3.z - point3.y * point1.x * point2.z - point1.z * point2.y * point3.x);
 		}
-		bool point_belongs(Point p) {
+		bool point_belongs(Point& p) {
 			if (!p.valid() || !point1.valid() || !point2.valid() || !point3.valid())
 				return false;
 			Plane pl(point1, point2, point3);
@@ -64,7 +64,7 @@ class Plane {
 			return (compare_double(A*p.x + B*p.y + C*p.z + D, 0) == 0);
 		}
 
-		bool equal(Plane plane) {
+		bool equal(Plane& plane) {
 			if (!plane.valid() || !point1.valid() || !point2.valid() || !point3.valid())
 				return false;
 			double A = plane.A(), B = plane.B(), C = plane.C(), D = plane.D();
@@ -73,7 +73,7 @@ class Plane {
 				    compare_double(A*point3.x + B*point3.y + C*point3.z + D, 0) == 0);
 		}
 
-		Line plane_intersection(Plane plane2) {
+		Line plane_intersection(Plane& plane2) {
 			Plane plane1 (point1, point2, point3);
 			double A1 = plane1.A(); double A2 = plane2.A();
 			double B1 = plane1.B(); double B2 = plane2.B();
@@ -126,15 +126,21 @@ class Plane {
 			}
 			
 			if (point_1.valid()) {
-				point_2.x = point_1.x + N1;
-				point_2.y = point_1.y + N2;
-				point_2.z = point_1.z + N3;
+				double a = -(point_1.x*N1 + point_1.y*N2 + point_1.z * N3)/(N1*N1 + N2*N2 + N3*N3);
+				point_2.x = point_1.x + N1*a;
+				point_2.y = point_1.y + N2*a;
+				point_2.z = point_1.z + N3*a;
+				if (point_1.equal(point_2)) {
+					point_2.x+=N1/(std::sqrt(N1*N1+N2*N2+N3*N3));
+					point_2.y+=N2/(std::sqrt(N1*N1+N2*N2+N3*N3));
+					point_2.z+=N3/(std::sqrt(N1*N1+N2*N2+N3*N3));
+				}
 			}
 			
 			Line line (point_1, point_2);
 			return line;
 		}		
-        Point intersection_with_line(Line line) {
+        Point intersection_with_line(Line& line) {
 			Point intersection {};
 			
 			if (!point1.valid() || !point2.valid() || !point3.valid() || !line.valid())
